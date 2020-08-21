@@ -1,3 +1,38 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" menu-id = "main-menu" contentId="main" >
+   
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+  
+    <ion-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="receipt-outline" slot="start"></ion-icon>
+          <ion-label>Traducir</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="terminal-outline" slot="start"></ion-icon>
+          <ion-label>Analizar</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="server-outline" slot="start"></ion-icon>
+          <ion-label>Tabla de Simbolos</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="skull-outline" slot="start"></ion-icon>
+          <ion-label>Tabla de Errores</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="map-outline" slot="start"></ion-icon>
+          <ion-label>Gráficar AST</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  
+  </ion-menu>
+  
+  <ion-router-outlet id="main"></ion-router-outlet>
 </ion-app>
