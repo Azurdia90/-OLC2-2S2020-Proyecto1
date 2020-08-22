@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MenuComponent } from './menu/menu.component';
 import { TextAreaComponent } from './text-area/text-area.component';
 import { TerminalComponent } from './terminal/terminal.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: 
@@ -16,6 +17,7 @@ import { TerminalComponent } from './terminal/terminal.component';
   imports: 
   [
     CommonModule,
+    ReactiveFormsModule,
     IonicModule
   ],
   exports:

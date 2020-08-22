@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-text-area',
@@ -7,13 +8,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TextAreaComponent implements OnInit {
 
-  constructor() { }
+  formulario_ejecutar : FormGroup
+
+  constructor(private formBuilder: FormBuilder) 
+  { 
+    this.buildForm();
+  }
 
   ngOnInit() {}
 
-  ejecutar()
+  private buildForm() 
   {
-    console.log("esto debo jalar del area de texto");
+    this.formulario_ejecutar = this.formBuilder.group({
+      textarea: ['',  [Validators.required]]
+    });
+    
+  }
+
+  ejecutar(event: Event)
+  {
+    event.preventDefault();
+    const value = this.formulario_ejecutar.value;
+    const execute_text = value['textarea'];
   }
 
 }

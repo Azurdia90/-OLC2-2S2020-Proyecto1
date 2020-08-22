@@ -1,5 +1,7 @@
-<ion-item itemid="text-area">
-  <ion-label position="stacked" >Ingrese su código:</ion-label>
-  <ion-textarea rows = "25"></ion-textarea>
-  <ion-button expand="full" fill="outline" color = "success" (click) = "ejecutar()">Ejecutar</ion-button>
-</ion-item>
+<form [formGroup] = "formulario_ejecutar" (ngSubmit)="ejecutar($event)">
+  <ion-item>
+      <ion-label position="stacked" >Ingrese su código:</ion-label>
+      <ion-textarea type = "text" rows = "25" formControlName = "textarea" ></ion-textarea>
+      <ion-button expand="full" fill="outline" color = "success" type = "submit">Ejecutar</ion-button>
+  </ion-item>
+</form>
