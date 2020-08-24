@@ -104,23 +104,23 @@ case 5: case 30:
 this.$ = $$[$0-1];
 break;
 case 6:
-this.$ = {etiqueta: "tipo_dato", tipo: tipo_dato.void, traduccion: "void", rol: tipo_rol.identificador};
+this.$ =  new Tipo(tipo_dato.void);
 break;
 case 7:
-this.$ = {etiqueta: "tipo_dato", tipo: tipo_dato.booleano, traduccion: "boolean", rol: tipo_rol.identificador};
+this.$ = new Tipo(tipo_dato.booleano);
 break;
 case 8:
-this.$ = {etiqueta: "tipo_dato", tipo: tipo_dato.entero, traduccion: "number", rol: tipo_rol.identificador};
+this.$ = new Tipo(tipo_dato.number);
 break;
 case 9:
 
-        if($$[$0].toLowerCase() == "string")
+        if($$[$0].toLowerCase() == "String")
         {
-          this.$ = {etiqueta: "tipo_dato", tipo: tipo_dato.cadena, traduccion: "String", rol: tipo_rol.identificador};
+          this.$ = new Tipo(tipo_dato.cadena);
         }
         else
         {
-          this.$ = {etiqueta: "tipo_dato", tipo: tipo_dato.identificador, traduccion: $$[$0], rol: tipo_rol.struct};
+          this.$ = new Tipo(tipo_dato.identicador,$$[$0]);
         }
       
 break;
@@ -347,35 +347,35 @@ case 49:
 
         var linea = yylineno;
         var columna = yyleng;
-        this.$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.nulo, traduccion: "null", rol: tipo_rol.identificador},yytext); 
+        this.$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.NULO),yytext); 
       
 break;
 case 50:
 
         var linea = yylineno;
         var columna = yyleng;
-        this.$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.booleano, traduccion: "boolean", rol: tipo_rol.identificador},yytext); 
+        this.$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.BOOLEANO),yytext); 
       
 break;
 case 51:
 
         var linea = yylineno;
         var columna = yyleng;
-        this.$ = new Dato_Primitivo(linea, columna,{etiqueta: "tipo_dato", tipo: tipo_dato.number, traduccion: "number", rol: tipo_rol.identificador},yytext);
+        this.$ = new Dato_Primitivo(linea, columna,new Tipo(tipo_dato.NUMERO),yytext);
       
 break;
 case 52:
 
         var linea = yylineno;
         var columna = yyleng;
-        this.$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.cadena, traduccion: "String", rol: tipo_rol.identificador},yytext.substring(1,yytext.length-1));
+        this.$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.CADENA),yytext);
       
 break;
 case 53:
 
         var linea = yylineno;
         var columna = yyleng;
-        this.$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.identificador, traduccion: yytext, rol: tipo_rol.identificador},yytext);
+        this.$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.IDENTIFICADOR),yytext);
       
 break;
 }

@@ -1,5 +1,5 @@
 import Simbolo from "../Grammar_Instruction/Simbolo";
-//import Entorno from "./Tabla_Simbolos/Entorno";
+import Middle from './Middle';
 
 class Instruction
 {
@@ -12,22 +12,27 @@ class Instruction
         this.columna = pcolumna;
     }
 
-    ejecutar(entorno_padre : Map<String,Simbolo>, salida : Input)
+    ejecutar(entorno_padre : Map<String,Simbolo>, salida : Middle)
     {
         return undefined;
     }
 
-    traducir(entorno_padre : Map<String,Simbolo>, salida : Input)
+    traducir(entorno_padre : Map<String,Simbolo>, salida : Middle)
     {
         return undefined;
     }
 
-    graficar(entorno_padre : Map<String,Simbolo>, salida : Input)
+    graficar(entorno_padre : Map<String,Simbolo>, salida : Middle)
     {
         return undefined;
     }
 
-    generar(entorno_padre : Map<String,Simbolo>, salida : Input)
+    generar(entorno_padre : Map<String,Simbolo>, salida : Middle)
+    {
+        return undefined;
+    }
+
+    getThis()
     {
         return undefined;
     }

@@ -1,3 +1,5 @@
+import Tipo from './Tipo';
+
 class Simbolo
 {
     private fila : number;
@@ -11,7 +13,7 @@ class Simbolo
             
     constructor(p_rol : tipo_rol, p_tipo : Tipo, p_id : String)
     {
-        this.acceso = tipo_acceso.publico;
+        this.acceso = tipo_acceso.PUBLICO;
         
         this.rol = p_rol;
         this.tipo = p_tipo;

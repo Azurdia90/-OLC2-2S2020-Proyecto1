@@ -1,18 +1,18 @@
 const enum tipo_dato
 {
-    nulo,
-    booleano,
-    numero,
-    cadena,
-    identificador,
-    void
+    VOID,
+    NULO,
+    BOOLEANO,
+    NUMERO,
+    CADENA,
+    IDENTIFICADOR
 }
 
 const enum tipo_acceso 
 {
-    publico,
-    privado,
-    protegido
+    PUBLICO,
+    PRIVADO,
+    PROTEGIDO
 }
     
 const enum tipo_rol
@@ -29,7 +29,30 @@ const enum tipo_rol
     error
 }
 
-const enum tipo_operacion 
+const enum tipo_operacion
+{
+    VALOR,
+    SUMA,
+    RESTA,
+    MULTIPLICACION,
+    DIVISION,
+    MODULO,
+    POTENCIA,
+    NEGATIVO,
+    MAYOR_QUE,
+    MENOR_QUE,
+    MAYOR_IGUAL_QUE,
+    MENOR_IGUAL_QUE,
+    DIFERENTE_QUE,
+    IGUAL_QUE,
+    TERNARIO,
+    NOT,
+    AND,
+    OR,
+    ERROR
+}
+
+const enum tipo_operacion_resultado
 {
     suma_numero,
     suma_numero_cadena,

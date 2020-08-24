@@ -152,20 +152,20 @@ SENTENCIA
 
 TIPO
     : r_void
-      {$$ = {etiqueta: "tipo_dato", tipo: tipo_dato.void, traduccion: "void", rol: tipo_rol.valor};}
+      {$$ =  new Tipo(tipo_dato.void);}
     |r_boolean
-      {$$ = {etiqueta: "tipo_dato", tipo: tipo_dato.booleano, traduccion: "boolean", rol: tipo_rol.valor};}
+      {$$ = new Tipo(tipo_dato.booleano);}
     | r_number
-      {$$ = {etiqueta: "tipo_dato", tipo: tipo_dato.entero, traduccion: "number", rol: tipo_rol.valor};}
+      {$$ = new Tipo(tipo_dato.number);}
     | identificador
       {
-        if($1.toLowerCase() == "string")
+        if($1.toLowerCase() == "String")
         {
-          $$ = {etiqueta: "tipo_dato", tipo: tipo_dato.cadena, traduccion: "String", rol: tipo_rol.valor};
+          $$ = new Tipo(tipo_dato.cadena);
         }
         else
         {
-          $$ = {etiqueta: "tipo_dato", tipo: tipo_dato.identificador, traduccion: $1, rol: tipo_rol.type};
+          $$ = new Tipo(tipo_dato.identicador,$1);
         }
       }
     ;
@@ -416,30 +416,30 @@ DATO_PRIMITIVO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.nulo, traduccion: "null", rol: tipo_rol.identificador},yytext); 
+        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.NULO),yytext); 
       }
     | boolean
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.booleano, traduccion: "boolean", rol: tipo_rol.identificador},yytext); 
+        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.BOOLEANO),yytext); 
       }
     | number
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea, columna,{etiqueta: "tipo_dato", tipo: tipo_dato.number, traduccion: "number", rol: tipo_rol.identificador},yytext);
+        $$ = new Dato_Primitivo(linea, columna,new Tipo(tipo_dato.NUMERO),yytext);
       }
     | string
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.cadena, traduccion: "String", rol: tipo_rol.identificador},yytext.substring(1,yytext.length-1));
+        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.CADENA),yytext);
       }
     | identificador
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,{etiqueta: "tipo_dato", tipo: tipo_dato.identificador, traduccion: yytext, rol: tipo_rol.identificador},yytext);
+        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.IDENTIFICADOR),yytext);
       }
     ;
