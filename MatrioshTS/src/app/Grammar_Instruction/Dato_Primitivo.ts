@@ -83,8 +83,7 @@ class Dato_Primitivo extends Expresion
     
     public getThis() 
     {
-        let clon : Dato_Primitivo = new Dato_Primitivo(this.fila, this.columna, this.tipo, this.valor);
-        return clon;
+        return new Dato_Primitivo(this.fila, this.columna, this.tipo, this.valor);
     }
 
 }
