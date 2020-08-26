@@ -10,6 +10,8 @@ class Simbolo
     private tipo : Tipo;
     private identificador : String;
     private valor : Object;
+
+    private constante : Boolean;
             
     constructor(p_rol : tipo_rol, p_tipo : Tipo, p_id : String)
     {
@@ -19,7 +21,9 @@ class Simbolo
         this.tipo = p_tipo;
         this.identificador = p_id; 
 
-        this.valor = undefined;                           
+        this.valor = undefined;
+
+        this.constante = false;                        
     }
     
     public getFila()
@@ -63,6 +67,16 @@ class Simbolo
 
     public setValor(valor : Object) {
         this.valor = valor;
+    }
+
+    public getConstante()
+    {
+        return this.constante;
+    }
+
+    public setConstante(p_constante : Boolean)
+    {
+        this.constante = p_constante;
     }
     
     /*
