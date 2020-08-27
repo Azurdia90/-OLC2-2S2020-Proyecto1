@@ -185,76 +185,72 @@ SENTENCIA_DECLARACION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setTipodato($1);
-        $$.setValor($4);
+        $$ = new Sentencia_Declaracion(linea,columna,$1,$5,$3);
       }
     |LISTA_IDENTIFICADORES s_doble_dot TIPO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setTipodato($1);        
+        $$ = new Sentencia_Declaracion(linea,columna,$1);
+        $$.setTipo($3);        
       }
     | LISTA_IDENTIFICADORES s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setTipodato($1);
-        $$.setValor($4);
+        $$ = new Sentencia_Declaracion(linea,columna,$1);
+        $$.setValor($3);
       }
     | LISTA_IDENTIFICADORES 
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setTipodato($1);
-        $$.setValor($4);
+        $$ = new Sentencia_Declaracion(linea,columna,$1);
       }
     | r_let LISTA_IDENTIFICADORES s_doble_dot TIPO s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
         $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setValor($5);
+        $$.setValor($4);
+        $$.setValor($6);
       }
     | r_let LISTA_IDENTIFICADORES s_doble_dot TIPO
       {
         var linea = yylineno;
         var columna = yyleng;
         $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setValor($5);
+        $$.setTipo($4);
       }
     | r_let LISTA_IDENTIFICADORES s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
         $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setValor($5);
+        $$.setValor($4);
       }
     | r_let LISTA_IDENTIFICADORES
       {
         var linea = yylineno;
         var columna = yyleng;
         $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setValor($5);
       }
     | r_const LISTA_IDENTIFICADORES s_doble_dot TIPO s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
         $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setisConst(true);
-        $$.setValor($5);        
+        $$.setConst();
+        $$.setTipo($4);  
+        $$.setValor($6);        
       }  
     | r_const LISTA_IDENTIFICADORES s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
         $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setisConst(true);
-        $$.setValor($5);        
+        $$.setConst();
+        $$.setValor($4);        
       }
     ;
 
@@ -410,6 +406,62 @@ OPERADOR_DECREMENTO
       }
     ; 
 
+SENTENCIA_LLAMADA
+  : identificador s_par_open LISTA_EXPRESIONES s_par_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = new Sentencia_LLamada(linea,columna,$1,$3);
+    }
+  | identificador s_par_open s_par_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = new Sentencia_LLamada(linea,columna,$1,[]);
+    } 
+  ;
+
+SENTENCIA_ACCESO  
+  : identificador LISTA_ACCESOS
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = new Sentencia_Acceso(linea,columna,$1,$2);
+    }
+  ;
+
+LISTA_ACCESOS   
+  : LISTA_ACCESOS ACCESO
+    {
+      $1.push($2);
+      $$ = $1;
+    }
+    |ACCESO
+    {
+      $$ = [$1];
+    }
+  ;
+
+ACCESO 
+  : s_cor_open EXPRESION s_cor_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$= new Tipo_Acceso(linea,columna,0,$2,null,null);
+    }
+    | s_dot SENTENCIA_LLAMADA
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = new Tipo_Acceso(linea,columna,2,null,null,$2);
+    }
+    | s_dot identificador
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = new Tipo_Acceso(linea,columna,1,null,$2,null);
+    }
+  ;
 
 DATO_PRIMITIVO
     : nulo

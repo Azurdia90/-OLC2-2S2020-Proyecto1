@@ -1,5 +1,7 @@
 import Simbolo from './Simbolo';
 import Instruction from './Instruction';
+import Stack from './Stack';
+import Funcion from './Funcion';
 
 class Tabla_Simbolos
 {
@@ -18,7 +20,7 @@ class Tabla_Simbolos
         this.lista_instrucciones = new Array<Instruction>();
         this.lista_funciones = new Array<Funcion>();
         
-        this.stack.add(entorno_global);
+        this.stack.push(this.entorno_global);
     }
     
     /**********************METODOS DE SINGLETON********************************/
@@ -51,8 +53,8 @@ class Tabla_Simbolos
         
         for(var x : number = 0; x < this.lista_funciones.length; x++)
         {
-            Funcion funcion_actual = this.lista_funciones[x];
-            if(funcion_actual.getIdentificador().equalsIgnoreCase(p_identificador))
+            let funcion_actual : Funcion = this.lista_funciones[x];
+            if(funcion_actual.getIdentificador() == p_identificador)
             {
                 return true;
             }
@@ -67,8 +69,8 @@ class Tabla_Simbolos
         
         for(var x : number = 0; x < this.lista_funciones.length; x++)
         {
-            funcion_actual : Funcion = this.lista_funciones[x];
-            if(funcion_actual.getIdentificador().equalsIgnoreCase(p_identificador))
+            let funcion_actual : Funcion = this.lista_funciones[x];
+            if(funcion_actual.getIdentificador() == p_identificador)
             {
                 return funcion_actual.getThis();
             }
