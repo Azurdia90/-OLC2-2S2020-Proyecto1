@@ -9,6 +9,7 @@ class Sentencia_Declaracion extends Instruction
 
     protected tipo : Tipo;
     protected valor :  Instruction;
+    protected valor_ext : Simbolo;
     protected const : boolean;
 
     constructor(p_fila: number, p_columna: number, p_lista_id : String[], p_valor? : Instruction, p_tipo? : Tipo)
@@ -20,6 +21,7 @@ class Sentencia_Declaracion extends Instruction
         this.tipo = p_tipo;
 
         this.const = false;
+        this.valor_ext  = undefined;
     }
 
     public ejecutar(entorno_padre : Map<String,Simbolo>, salida : Middle)
@@ -29,15 +31,24 @@ class Sentencia_Declaracion extends Instruction
 
         try
         {
-            if(this.valor == undefined)
+            if(this.valor == undefined && this.valor_ext == undefined)
             {
                 _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.NULO), "");
                 _val_fin.setValor("null");
+            }
+            else if(this.valor == undefined && this.valor_ext != undefined)
+            {
+                _val_fin = this.valor_ext;
+            }
+            else if(this.valor != undefined && this.valor_ext == undefined)
+            {
+                _val_fin = this.valor.ejecutar(entorno_padre, salida);
             }
             else
             {
                 _val_fin = this.valor.ejecutar(entorno_padre, salida);
             }
+            
 
             if (_val_fin.getRol() != tipo_rol.valor || _val_fin.getRol() != tipo_rol.arreglo)
             {
@@ -108,9 +119,19 @@ class Sentencia_Declaracion extends Instruction
         return sentencia_declaracion;
     }
 
+    public getValor()
+    {
+        return this.valor;
+    }
+
     public setValor(p_valor : Instruction)
     {
         this.valor = p_valor;
+    }
+
+    public setValor_Ext(p_valor : Simbolo)
+    {
+        this.valor_ext = p_valor;
     }
 
     public setTipo(p_tipo : Tipo)

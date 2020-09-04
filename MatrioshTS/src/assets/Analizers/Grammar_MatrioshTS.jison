@@ -39,9 +39,9 @@
 "true"                return 'boolean'
 "false"               return 'boolean'
 
-[0-9]+"."[0-9]+       return 'number'
+[0-9]+("."[0-9]+)?    return 'number'
 "'"[^"'"]*"'"         return 'string'
-"\""[^"\""]*"\""	  return 'string'
+"\""[^"\""]*"\""	    return 'string'
 
 "null"                return 'nulo'
 
@@ -148,24 +148,30 @@ SENTENCIA
       {$$ = $1;}
     /*| SENTENCIA_ASIGNACION s_dot_coma
       {$$ = $1;}  */
+      | SENTENCIA_LLAMADA s_dot_coma
+      {$$ = $1;} 
+      | SENTENCIA_ACCESO s_dot_coma
+      {$$ = $1;} 
     ;
 
 TIPO
     : r_void
-      {$$ =  new Tipo(tipo_dato.void);}
-    |r_boolean
-      {$$ = new Tipo(tipo_dato.booleano);}
+      {$$ = {etiqueta: 'tipo', tipo: 0, valor: $1};}
+    | r_nulo
+      {$$ = {etiqueta: 'tipo', tipo: 1, valor: $1};}
+    | r_boolean
+      {$$ = {etiqueta: 'tipo', tipo: 2, valor: $1};}
     | r_number
-      {$$ = new Tipo(tipo_dato.number);}
+      {$$ = {etiqueta: 'tipo', tipo: 3, valor: $1};}
     | identificador
       {
         if($1.toLowerCase() == "String")
         {
-          $$ = new Tipo(tipo_dato.cadena);
+          $$ = {etiqueta: 'tipo', tipo: 4, valor: $1};
         }
         else
         {
-          $$ = new Tipo(tipo_dato.identicador,$1);
+          $$ = {etiqueta: 'tipo', tipo: 5, valor: $1};
         }
       }
     ;
@@ -185,72 +191,62 @@ SENTENCIA_DECLARACION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$1,$5,$3);
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $1, tipo: $3, valor: $5};
       }
     |LISTA_IDENTIFICADORES s_doble_dot TIPO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$1);
-        $$.setTipo($3);        
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $1, tipo: $3, valor: null};      
       }
     | LISTA_IDENTIFICADORES s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$1);
-        $$.setValor($3);
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $1, tipo: null, valor: $3};
       }
     | LISTA_IDENTIFICADORES 
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$1);
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $1, tipo: null, valor: null};
       }
     | r_let LISTA_IDENTIFICADORES s_doble_dot TIPO s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setValor($4);
-        $$.setValor($6);
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $2, tipo: $4, valor: $6};
       }
     | r_let LISTA_IDENTIFICADORES s_doble_dot TIPO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setTipo($4);
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $2, tipo: $4, valor: null};
       }
     | r_let LISTA_IDENTIFICADORES s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $2, tipo: null, valor: $4};
         $$.setValor($4);
       }
     | r_let LISTA_IDENTIFICADORES
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $2, tipo: null, valor: null};
       }
     | r_const LISTA_IDENTIFICADORES s_doble_dot TIPO s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setConst();
-        $$.setTipo($4);  
-        $$.setValor($6);        
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: true, identificador: $2, tipo: $4, valor: $6};      
       }  
     | r_const LISTA_IDENTIFICADORES s_asign EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Declaracion(linea,columna,$2);
-        $$.setConst();
-        $$.setValor($4);        
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: true, identificador: $2, tipo: null, valor: $4};      
       }
     ;
 
@@ -281,7 +277,9 @@ EXPRESION
     | OPERADOR_DECREMENTO  
       {$$ = $1;}     
     | s_par_open EXPRESION s_par_close
-      {$$ = $2;}            
+      {$$ = $2;}  
+    | SENTENCIA_ACCESO
+      {$$ = $1;}           
     | DATO_PRIMITIVO
       {$$ = $1;} 
     ;
@@ -291,31 +289,31 @@ EXPRESION_ARITMETICA
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Suma(linea,columna,$1,$3);
+        $$ = {etiqueta: 'suma', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_minus EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Resta(linea,columna,$1,$3);
+        $$ = {etiqueta: 'resta', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_mul EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Multiplicacion(linea,columna,$1,$3);
+        $$ = {etiqueta: 'multiplicacion', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_div EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Division(linea,columna,$1,$3);
+        $$ = {etiqueta: 'divido', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_mod EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Modulo(linea,columna,$1,$3);
+        $$ = {etiqueta: 'modulo', linea: linea, columna: columna, expresion: $1, expresion2: $3};
       }
     ;
 
@@ -324,37 +322,37 @@ EXPRESION_RELACIONAL
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Mayor_Que(linea,columna,$1,$3);
+        $$ = {etiqueta: 'mayor_que', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_less EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Menor_Que(linea,columna,$1,$3);
+        $$ = {etiqueta: 'menor_que', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_greather_equal EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Mayor_Igual_Que(linea,columna,$1,$3);
+        $$ = {etiqueta: 'mayor_igual_que', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_less_equal EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Menor_Igual_Que(linea,columna,$1,$3);
+        $$ = {etiqueta: 'menor_igual_que', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_equal EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Igual_Que(linea,columna,$1,$3);
+        $$ = {etiqueta: 'igual_que', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_not_equal EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Diferente_Que(linea,columna,$1,$3);
+        $$ = {etiqueta: 'diferente_que', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     ;
 
@@ -363,19 +361,19 @@ EXPRESION_LOGICA
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Or(linea,columna,$1,$3);
+        $$ = {etiqueta: 'or', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_and EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new And(linea,columna,$1,$3);
+        $$ = {etiqueta: 'and', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | s_not EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Not(linea,columna,$2);
+        $$ = {etiqueta: 'not', linea: linea, columna: columna, expresion1: $2};
       }
     ;
 
@@ -384,7 +382,7 @@ OPERADOR_UNARIO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Operador_Unario(linea,columna,$2);
+        $$ = {etiqueta: 'operador_urinario', linea: linea, columna: columna, expresion1: $2};
       }
     ;
 
@@ -393,7 +391,7 @@ OPERADOR_INCREMENTO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Operador_Incremento(linea,columna,$1);
+        $$ = {etiqueta: 'operador_incremento', linea: linea, columna: columna, expresion1: $1};
       }  
     ;    
 
@@ -402,31 +400,16 @@ OPERADOR_DECREMENTO
       {
         var linea = yylineno;
         var columna = yyleng; 
-        $$ = new Operador_Decremento(linea,columna,$1);
+        $$ = {etiqueta: 'operador_decremento', linea: linea, columna: columna, expresion: $1};
       }
     ; 
-
-SENTENCIA_LLAMADA
-  : identificador s_par_open LISTA_EXPRESIONES s_par_close
-    {
-      var linea = yylineno;
-      var columna = yyleng;
-      $$ = new Sentencia_LLamada(linea,columna,$1,$3);
-    }
-  | identificador s_par_open s_par_close
-    {
-      var linea = yylineno;
-      var columna = yyleng;
-      $$ = new Sentencia_LLamada(linea,columna,$1,[]);
-    } 
-  ;
 
 SENTENCIA_ACCESO  
   : identificador LISTA_ACCESOS
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = new Sentencia_Acceso(linea,columna,$1,$2);
+      $$ = {etiqueta: 'sentencia_acceso', linea: linea, columna: columna, identificador: $1, lista_acceso: $2};
     }
   ;
 
@@ -447,20 +430,35 @@ ACCESO
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$= new Tipo_Acceso(linea,columna,0,$2,null,null);
+      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 0, acceso0: $2, acceso1: null, acceso2: null};
     }
     | s_dot SENTENCIA_LLAMADA
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = new Tipo_Acceso(linea,columna,2,null,null,$2);
+      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 2, acceso0: null, acceso1: null, acceso2: $2};
     }
     | s_dot identificador
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = new Tipo_Acceso(linea,columna,1,null,$2,null);
+      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 1, acceso0: null, acceso1: $2, acceso2: null};
     }
+  ;
+
+SENTENCIA_LLAMADA
+  : identificador s_par_open LISTA_EXPRESIONES s_par_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'sentencia_llamada', linea: linea, columna: columna, identificador: $1, parametros: $3};
+    }
+  | identificador s_par_open s_par_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'sentencia_llamada', linea: linea, columna: columna, identificador: $1, parametros: []};
+    } 
   ;
 
 DATO_PRIMITIVO
@@ -468,30 +466,30 @@ DATO_PRIMITIVO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.NULO),yytext); 
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 1, valor: $1}, valor: yytext}; 
       }
     | boolean
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.BOOLEANO),yytext); 
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 2, valor: $1}, valor: yytext}; 
       }
     | number
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea, columna,new Tipo(tipo_dato.NUMERO),yytext);
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 3, valor: $1}, valor: yytext};
       }
     | string
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.CADENA),yytext);
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 4, valor: $1}, valor:  yytext};
       }
     | identificador
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Dato_Primitivo(linea,columna,new Tipo(tipo_dato.IDENTIFICADOR),yytext);
+        $$ = {etiqueta: 'valor_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: yytext};
       }
     ;

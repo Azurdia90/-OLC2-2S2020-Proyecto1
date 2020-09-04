@@ -1,4 +1,4 @@
-import Simbolo from "../Grammar_Instruction/Simbolo";
+import Simbolo from "./Simbolo";
 import Middle from './Middle';
 
 class Instruction

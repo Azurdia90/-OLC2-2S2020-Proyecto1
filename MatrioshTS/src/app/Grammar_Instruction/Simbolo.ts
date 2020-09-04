@@ -1,4 +1,5 @@
 import Tipo from './Tipo';
+import Instruction from '../../../dist/out-tsc/src/app/Grammar_Instruction/Instruction';
 
 class Simbolo
 {
@@ -11,6 +12,8 @@ class Simbolo
     private identificador : String;
     private valor : Object;
 
+    private lista_funcones : Array<Instruction>;
+
     private constante : Boolean;
             
     constructor(p_rol : tipo_rol, p_tipo : Tipo, p_id : String)
@@ -22,6 +25,8 @@ class Simbolo
         this.identificador = p_id; 
 
         this.valor = undefined;
+
+        this.lista_funcones = new Array<Instruction>();
 
         this.constante = false;                        
     }
