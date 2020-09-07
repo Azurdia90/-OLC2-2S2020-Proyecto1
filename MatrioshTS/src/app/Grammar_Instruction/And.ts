@@ -39,7 +39,7 @@ class And extends Expresion
                 return op2;
             }
 
-            if (!(op1.getTipo().getTipo() == tipo_dato.BOOLEANO || !(op2.getTipo().getTipo() == tipo_dato.BOOLEANO)))
+            if (!(op1.getTipo().getTipo() == tipo_dato.BOOLEANO) || !(op2.getTipo().getTipo() == tipo_dato.BOOLEANO))
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12");
                 _return.setFila(this.fila);
@@ -50,8 +50,8 @@ class And extends Expresion
             else
             {
                 _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO),"");
-                let valor1 : Boolean = new Boolean(op1.getValor());
-                let valor2 : Boolean = new Boolean(op2.getValor());
+                let valor1 : Boolean = <Boolean> op1.getValor();
+                let valor2 : Boolean = <Boolean> op2.getValor();
                 _return.setValor(valor1 && valor2);
                 return _return;
             }

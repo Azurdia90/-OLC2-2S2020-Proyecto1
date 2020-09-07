@@ -10,17 +10,17 @@ class Sentencia_Declaracion extends Instruction
     protected tipo : Tipo;
     protected valor :  Instruction;
     protected valor_ext : Simbolo;
-    protected const : boolean;
+    protected const : Boolean;
 
-    constructor(p_fila: number, p_columna: number, p_lista_id : String[], p_valor? : Instruction, p_tipo? : Tipo)
+    constructor(p_fila: number, p_columna: number, p_const : Boolean, p_lista_id : String[], p_valor? : Instruction, p_tipo? : Tipo)
     {
         super(p_fila,p_columna);
-
+        
+        this.const = p_const;
         this.identificadores = p_lista_id;
         this.valor = p_valor;
         this.tipo = p_tipo;
 
-        this.const = false;
         this.valor_ext  = undefined;
     }
 
@@ -49,25 +49,27 @@ class Sentencia_Declaracion extends Instruction
                 _val_fin = this.valor.ejecutar(entorno_padre, salida);
             }
             
-
-            if (_val_fin.getRol() != tipo_rol.valor || _val_fin.getRol() != tipo_rol.arreglo)
+            if (_val_fin.getRol() != tipo_rol.valor && _val_fin.getRol() != tipo_rol.arreglo)
             {
                 return _val_fin;
             }
-
+            
             if(this.tipo != undefined)
             {
                 if(this.tipo.getTipo()  != _val_fin.getTipo().getTipo())
                 {
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("El tipo de la variable es diferente al valor a asignar.");
-                    nuevo_simbolo.setFila(this.fila);
-                    nuevo_simbolo.setColumna(this.columna);
-                    return nuevo_simbolo;
+                    if(_val_fin.getTipo().getTipo() != tipo_dato.NULO)
+                    {
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("El tipo de la variable es diferente al valor a asignar.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }
                 }
             }
 
-            for(var cont : number = 0; cont < this.identificadores.length - 1; cont++)
+            for(var cont : number = 0; cont < this.identificadores.length; cont++)
             {
                 if(entorno_padre.has(this.identificadores[cont]))
                 {
@@ -87,9 +89,9 @@ class Sentencia_Declaracion extends Instruction
             }    
             
             var simbolo_aceptado : Simbolo = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4"); 
-            nuevo_simbolo.setValor("Declaración Succesful");
-            nuevo_simbolo.setFila(this.fila);
-            nuevo_simbolo.setColumna(this.columna);
+            simbolo_aceptado.setValor("Declaración Succesful");
+            simbolo_aceptado.setFila(this.fila);
+            simbolo_aceptado.setColumna(this.columna);
             return nuevo_simbolo;
         }
         catch(Exception)
@@ -104,7 +106,7 @@ class Sentencia_Declaracion extends Instruction
 
     public getThis() 
     {
-        let sentencia_declaracion : Sentencia_Declaracion = new Sentencia_Declaracion(this.fila,this.columna,this.identificadores);
+        let sentencia_declaracion : Sentencia_Declaracion = new Sentencia_Declaracion(this.fila,this.columna,this.const,this.identificadores);
 
         if(this.valor != undefined)
         {
@@ -137,11 +139,6 @@ class Sentencia_Declaracion extends Instruction
     public setTipo(p_tipo : Tipo)
     {
         this.tipo = p_tipo;
-    }
-
-    public setConst()
-    {
-        this.const = true
     }
 }
 

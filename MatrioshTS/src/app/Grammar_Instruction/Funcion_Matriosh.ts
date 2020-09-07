@@ -33,7 +33,7 @@ class Funcion_Matriosh extends Funcion
 
                 var _result : Simbolo = declaracion_actual.ejecutar(this.entorno_local, salida);
 
-                if(_result.getRol() != tipo_rol.valor || _result.getRol() != tipo_rol.arreglo)
+                if(_result.getRol() != tipo_rol.valor && _result.getRol() != tipo_rol.arreglo)
                 {
                     this.entorno_local = new Map<String,Simbolo>();
                     return _result;
@@ -66,22 +66,21 @@ class Funcion_Matriosh extends Funcion
         {
             var _tmp_return : Simbolo;
             
-            //cambio de ambito
-            Tabla_Simbolos.getInstance().getStack().push(this.entorno_local);
-            //System.out.println("Se entro a un metodo cantidad de ambitos: " + Tabla_Simbolos.getInstance().getStack().size());
+            Tabla_Simbolos.getInstance().getStack()._push(this.fila,this.columna,this.entorno_local);
+            //consolo.log("Se entro a un metodo cantidad de ambitos: " + Tabla_Simbolos.getInstance().getStack().size());
             
             for(var x = 0; x < this.lista_sentencias.length; x++)            
             {
                 _tmp_return = this.lista_sentencias[x].ejecutar(this.entorno_local, salida);
                 
-                if (_tmp_return.getRol() == tipo_rol.error) //Error
+                if (_tmp_return.getRol() == tipo_rol.error)
                 {
                     _return = _tmp_return;
                     Tabla_Simbolos.getInstance().getStack().pop();
                     this.entorno_local = new Map<String,Simbolo>();
                     return _return;                    
                 }
-                else if (_tmp_return.getRol() == tipo_rol.detener) //BREAK
+                else if (_tmp_return.getRol() == tipo_rol.detener)
                 {
                     Tabla_Simbolos.getInstance().getStack().pop();
                     this.entorno_local = new Map<String,Simbolo>();
@@ -92,7 +91,7 @@ class Funcion_Matriosh extends Funcion
                     _return.setValor("Error en Funcion: No se permite el uso de sentencia break");
                     return _return;                    
                 }
-                else if(_tmp_return.getRol() == tipo_rol.continuar) //CONTINUE
+                else if(_tmp_return.getRol() == tipo_rol.continuar)
                 {
                     Tabla_Simbolos.getInstance().getStack().pop();
                     this.entorno_local = new Map<String,Simbolo>();
@@ -103,7 +102,7 @@ class Funcion_Matriosh extends Funcion
                     _return.setValor("Error en Funcion: No se permite el uso de sentencia continue");
                     return _return;   
                 }
-                else if(_tmp_return.getRol() == tipo_rol.retornar) //RETURN
+                else if(_tmp_return.getRol() == tipo_rol.retornar) 
                 {                                                           
                     _return = <Simbolo> _tmp_return.getValor();                 
                     Tabla_Simbolos.getInstance().getStack().pop();

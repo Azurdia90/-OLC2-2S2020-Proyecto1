@@ -30,7 +30,7 @@ class Suma extends Expresion
         {
             let op1 : Simbolo = (this.operador_izq == null) ? null : this.operador_izq.ejecutar(entorno_padre, salida);
             let op2 : Simbolo = (this.operador_der == null) ? null : this.operador_der.ejecutar(entorno_padre, salida);
-
+            
             let tipo_suma :tipo_operacion_resultado;
 
             if (op1 == null || op2 == null)
@@ -42,12 +42,12 @@ class Suma extends Expresion
                 return _return;
             }
 
-            if (op1.getRol() != tipo_rol.valor || op1.getRol() != tipo_rol.arreglo)
+            if (op1.getRol() != tipo_rol.valor && op1.getRol() != tipo_rol.arreglo)
             {
                 return op1;
             }
 
-            if (op2.getRol() != tipo_rol.valor || op2.getRol() != tipo_rol.arreglo)
+            if (op2.getRol() != tipo_rol.valor && op2.getRol() != tipo_rol.arreglo)
             {
                 return op2;
             }

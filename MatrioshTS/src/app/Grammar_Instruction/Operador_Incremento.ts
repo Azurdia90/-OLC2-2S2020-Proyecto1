@@ -27,7 +27,7 @@ class Operador_Incremento extends Expresion
                 return _return;
             }
 
-            if (op1.getRol() != tipo_rol.valor || op1.getRol() != tipo_rol.arreglo)
+            if (op1.getRol() != tipo_rol.valor && op1.getRol() != tipo_rol.arreglo)
             {
                 return op1;
             }

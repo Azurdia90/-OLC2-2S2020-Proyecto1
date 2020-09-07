@@ -27,7 +27,7 @@ class Not extends Expresion
                 return _return;
             }
 
-            if (op1.getRol() != tipo_rol.valor || op1.getRol() != tipo_rol.arreglo)
+            if (op1.getRol() != tipo_rol.valor && op1.getRol() != tipo_rol.arreglo)
             {
                 return op1;
             }
@@ -42,7 +42,7 @@ class Not extends Expresion
             }
             else
             {
-                let valor1 : Boolean = new Boolean(op1.getValor());
+                let valor1 : Boolean = <Boolean> op1.getValor();
                 _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO),"");                
                 _return.setValor(!valor1);
                 return _return;

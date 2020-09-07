@@ -42,12 +42,12 @@ class Division extends Expresion
                 return _return;
             }
 
-            if (op1.getRol() != tipo_rol.valor || op1.getRol() != tipo_rol.arreglo)
+            if (op1.getRol() != tipo_rol.valor && op1.getRol() != tipo_rol.arreglo)
             {
                 return op1;
             }
 
-            if (op2.getRol() != tipo_rol.valor || op2.getRol() != tipo_rol.arreglo)
+            if (op2.getRol() != tipo_rol.valor && op2.getRol() != tipo_rol.arreglo)
             {
                 return op2;
             }
@@ -56,7 +56,7 @@ class Division extends Expresion
 
             switch(tipo_division)
             {
-                case tipo_operacion_resultado.multiplicacion_numero:
+                case tipo_operacion_resultado.division_numero:
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.NUMERO), "");
                     _return.setValor(Number(op1.getValor()) / Number(op2.getValor()));
                     return _return;

@@ -2,6 +2,7 @@ import Expresion from './Expresion';
 import Tipo from './Tipo';
 import Simbolo from './Simbolo';
 import Middle from './Middle';
+import Tabla_Simbolos from './Tabla_Simbolos';
 
 class Dato_Primitivo extends Expresion
 {
@@ -23,7 +24,7 @@ class Dato_Primitivo extends Expresion
             }
             else if(this.tipo.getTipo() == tipo_dato.BOOLEANO)
             {
-                if(this.valor = "true")
+                if(this.valor == "true")
                 {
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO),"");
                     _return.setValor(true);
@@ -50,17 +51,15 @@ class Dato_Primitivo extends Expresion
             }                
 
             else if(this.tipo.getTipo() == tipo_dato.IDENTIFICADOR)
-            {   /*             
-                if(entorno_actual.containsKey(valor))
-                {                    
-                    return entorno_actual.get(valor);
+            {               
+                if(entorno_padre.has(this.valor))
+                {                 
+                    return entorno_padre.get(this.valor);
                 }
                 else
                 {   
-                    return Tabla_Simbolos.getInstance().getStack().buscarSimbolo(valor);                    
-                }   
-                */        
-               return undefined;     
+                    return Tabla_Simbolos.getInstance().getStack().getSimbolo(this.valor);                    
+                }      
             }                                
             else
             {

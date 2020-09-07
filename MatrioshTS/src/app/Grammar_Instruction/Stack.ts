@@ -1,5 +1,6 @@
 import Simbolo from "./Simbolo";
 import Tipo from './Tipo';
+import Funcion_Log from './Funcion_Log';
 
 class Stack extends Array<Map<String,Simbolo>>
 {
@@ -8,9 +9,37 @@ class Stack extends Array<Map<String,Simbolo>>
 
     //este objeto tiene metodo push para
     //Eliminar el ultimo de la lista
+
+    public _push(p_fila : number, p_columna : number, p_entorno_actual : Map<String,Simbolo>)
+    {
+        var object_console :Simbolo;
+        object_console = new Simbolo(tipo_rol.type, new Tipo(tipo_dato.IDENTIFICADOR,"console"), "console");
+        
+        var funcion_log : Funcion_Log;
+        funcion_log = new Funcion_Log(p_fila,p_columna)
+
+        object_console.getListaFunciones().push(funcion_log);
+        p_entorno_actual.set("console",object_console);
+
+        this.push(p_entorno_actual);
+    }
+
+    public existsSimbolo(key : String)
+    {
+        let _return : Boolean = false;
+        
+        for(var x : number = (this.length -1); x >= 0; x--)
+        { 
+            let entorno_local : Map<String,Simbolo> = this[x];
+            if(entorno_local.has(key))
+            {
+                return true;
+            }            
+        }        
+        return _return;
+    }
     
-    //buscar en todos los ambitos ingresados
-    public buscarSimbolo(key : String)
+    public getSimbolo(key : String)
     {
         let _return : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
         _return.setValor("El valor no existe en ningun ámbito");

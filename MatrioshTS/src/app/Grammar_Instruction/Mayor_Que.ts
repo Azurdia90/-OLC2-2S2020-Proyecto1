@@ -42,12 +42,12 @@ class Mayor_Que extends Expresion
                 return _return;
             }
 
-            if (op1.getRol() != tipo_rol.valor || op1.getRol() != tipo_rol.arreglo)
+            if (op1.getRol() != tipo_rol.valor && op1.getRol() != tipo_rol.arreglo)
             {
                 return op1;
             }
 
-            if (op2.getRol() != tipo_rol.valor || op2.getRol() != tipo_rol.arreglo)
+            if (op2.getRol() != tipo_rol.valor && op2.getRol() != tipo_rol.arreglo)
             {
                 return op2;
             }

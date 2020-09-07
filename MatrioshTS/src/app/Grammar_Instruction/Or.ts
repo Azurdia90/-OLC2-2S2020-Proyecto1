@@ -18,8 +18,7 @@ class Or extends Expresion
         {
             let op1 : Simbolo = (this.operador_izq == null) ? null : this.operador_izq.ejecutar(entorno_padre, salida);
             let op2 : Simbolo = (this.operador_der == null) ? null : this.operador_der.ejecutar(entorno_padre, salida);
-
-
+    
             if (op1 == null || op2 == null)
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12");
@@ -29,17 +28,17 @@ class Or extends Expresion
                 return _return;
             }
 
-            if (op1.getRol() != tipo_rol.valor || op1.getRol() != tipo_rol.arreglo)
+            if (op1.getRol() != tipo_rol.valor && op1.getRol() != tipo_rol.arreglo)
             {
                 return op1;
             }
 
-            if (op2.getRol() != tipo_rol.valor || op2.getRol() != tipo_rol.arreglo)
+            if (op2.getRol() != tipo_rol.valor && op2.getRol() != tipo_rol.arreglo)
             {
                 return op2;
             }
 
-            if (!(op1.getTipo().getTipo() == tipo_dato.BOOLEANO || !(op2.getTipo().getTipo() == tipo_dato.BOOLEANO)))
+            if (!(op1.getTipo().getTipo() == tipo_dato.BOOLEANO) || !(op2.getTipo().getTipo() == tipo_dato.BOOLEANO))
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12");
                 _return.setFila(this.fila);
@@ -50,8 +49,8 @@ class Or extends Expresion
             else
             {
                 _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO),"");
-                let valor1 : Boolean = new Boolean(op1.getValor());
-                let valor2 : Boolean = new Boolean(op2.getValor());
+                let valor1 : Boolean = <Boolean> op1.getValor();
+                let valor2 : Boolean = <Boolean> op2.getValor();
                 _return.setValor(valor1 || valor2);
                 return _return;
             }

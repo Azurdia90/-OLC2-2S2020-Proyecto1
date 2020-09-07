@@ -1,5 +1,4 @@
 import Simbolo from './Simbolo';
-import Instruction from './Instruction';
 import Stack from './Stack';
 import Funcion from './Funcion';
 
@@ -9,21 +8,16 @@ class Tabla_Simbolos
     
     private stack : Stack;
     private entorno_global : Map<String,Simbolo>;
-    
-    private lista_instrucciones : Array<Instruction>;
     private lista_funciones : Array<Funcion>;    
 
     constructor() 
     {
         this.stack = new Stack();
         this.entorno_global = new Map<String,Simbolo>();
-        this.lista_instrucciones = new Array<Instruction>();
+        this.stack._push(0,0,this.entorno_global);
+
         this.lista_funciones = new Array<Funcion>();
-        
-        this.stack.push(this.entorno_global);
     }
-    
-    /**********************METODOS DE SINGLETON********************************/
     
     public static getInstance()
     {
@@ -38,12 +32,11 @@ class Tabla_Simbolos
         }
     }
 
-    /******************FIN METODOS DE SINGLETON********************************/
-    /*********************METODOS DE LA CLASE**********************************/
     public clear()
     {
-        this.entorno_global.clear();
-        this.lista_instrucciones = new Array<Instruction>();  
+        this.stack = new Stack();
+        this.entorno_global.clear(); 
+        this.stack._push(0,0,this.entorno_global);
         this.lista_funciones = new Array<Funcion>();
     }
     
@@ -79,9 +72,6 @@ class Tabla_Simbolos
         return _return;
     }        
         
-    /*********************FIN DE METODOS DE LA CLASE***************************/
-
-    /***********************METODOS GET Y SET**********************************/
     public getEntorno_global() 
     {
         return this.entorno_global;
@@ -101,16 +91,6 @@ class Tabla_Simbolos
     {
         this.stack = stack;
     }   
-    
-    public getLista_instrucciones() 
-    {
-        return this.lista_instrucciones;
-    }
-
-    public setLista_instrucciones(lista_instrucciones : Array<Instruction>) 
-    {
-        this.lista_instrucciones = lista_instrucciones;
-    }
 
     public getLista_funciones() 
     {
@@ -121,7 +101,6 @@ class Tabla_Simbolos
     {
         this.lista_funciones = lista_funciones;
     }
-    
 }
 
 export default Tabla_Simbolos;

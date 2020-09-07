@@ -3,10 +3,25 @@ class Middle
     private input : String;
     private output : String;
 
+    private static instance : Middle = new Middle();
+
     constructor()
     {
         this.input = "";
         this.output = "";
+    }
+
+    public static getInstance()
+    {
+        if(this.instance != null)
+        {
+            return this.instance;
+        }
+        else
+        {
+            this.instance = new Middle();
+            return this.instance;
+        }
     }
 
     public getInput()
@@ -26,11 +41,12 @@ class Middle
 
     public setOuput(p_output : String)
     {
-        this.output = this.output.concat(p_output.toString());
+        this.output = this.output.concat(p_output.toString(),"\n");
     }
 
-    public clearOutput()
+    public clear()
     {
+        this.input = "";
         this.output = "";
     }
 

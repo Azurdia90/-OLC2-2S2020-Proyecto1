@@ -23,21 +23,43 @@ import Resta from './Resta';
 import Igual_Que from './Igual_Que';
 import Dato_Primitivo from './Dato_Primitivo';
 import Tipo_Acceso from './Tipo_Acceso';
+import Tabla_Simbolos from './Tabla_Simbolos';
+import Simbolo from './Simbolo';
+import Middle from './Middle';
+import Sentencia_Asignacion from './Sentencia_Asignacion';
 
 class AST
 {
     private superjason : Array<JSON>;
     private lista_instrucciones : Array<Instruction>;
 
-    constructor(p_jason : Array<JSON>)
+    constructor(p_jason : Array<JSON>, p_import : Boolean)
     {
-        this.superjason = p_jason;
-        this.lista_instrucciones = new Array<Instruction>();
+        if(!p_import)
+        {
+            this.superjason = p_jason;
+            this.lista_instrucciones = new Array<Instruction>();
+        }
+        
     }
 
     public exec_ast()
     {
-        
+        Tabla_Simbolos.getInstance().clear();
+
+        var _result : Simbolo;
+
+        for(var ins = 0; ins < this.lista_instrucciones.length; ins++)
+        {
+            _result = this.lista_instrucciones[ins].ejecutar(Tabla_Simbolos.getInstance().getEntorno_global(),Middle.getInstance());
+            console.log(_result);
+        }
+
+    }
+
+    public import_ast()
+    {
+
     }
 
     public build_ast()
@@ -46,24 +68,36 @@ class AST
         {            
             this.lista_instrucciones.push(this.fabrica_instrucciones(this.superjason[i]));    
         }
-
-        console.log(this.lista_instrucciones);
     }    
 
     private fabrica_instrucciones(instruccion_jason : JSON)
     {
-        console.log(instruccion_jason);
         if(instruccion_jason['etiqueta'] == 'sentencia_declaracion')
         {
-            return new Sentencia_Declaracion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['identificador'],this.fabrica_expresiones(instruccion_jason['valor']),this.fabrica_tipo(instruccion_jason['tipo']));
+            return new Sentencia_Declaracion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['constante'],instruccion_jason['identificador'],this.fabrica_expresiones(instruccion_jason['valor']),this.fabrica_tipo(instruccion_jason['tipo']));
+        }
+        if(instruccion_jason['etiqueta'] == 'sentencia_asignacion')
+        {
+            return new Sentencia_Asignacion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['tipo'],instruccion_jason['acceso0'],instruccion_jason['acceso1'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso1']),this.fabrica_expresiones(instruccion_jason['valor']));
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_acceso')
         {
-            return new Sentencia_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['identificador'], instruccion_jason['lista_acceso']);
+            var lista_accesos : Array<Tipo_Acceso>;
+            var tipo_acceso_jason : JSON;
+
+            lista_accesos = new Array<Tipo_Acceso>();
+
+            for(var cont = 0; cont < instruccion_jason['lista_acceso'].length; cont++)
+            {
+                tipo_acceso_jason = instruccion_jason['lista_acceso'][cont];
+                lista_accesos.push(<Tipo_Acceso>this.fabrica_instrucciones(tipo_acceso_jason));
+            }
+
+            return new Sentencia_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['identificador'], lista_accesos);
         }
         else if(instruccion_jason['etiqueta'] == 'tipo_acceso')
         {
-            return new Tipo_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['tipo'], this.fabrica_expresiones(instruccion_jason['expresion1']), this.fabrica_expresiones(instruccion_jason['expresion2']), instruccion_jason['expresion3']);
+            return new Tipo_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['tipo'], instruccion_jason['acceso0'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso0']), instruccion_jason['acceso2'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso2']), instruccion_jason['acceso1']);
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_llamada')
         {
@@ -72,14 +106,13 @@ class AST
 
             lista_parametros = new Array<Expresion>();
 
-
-            for(var cont = 0; cont < instruccion_jason['lista_paramentros'].length; cont++)
+            for(var cont = 0; cont < instruccion_jason['parametros'].length; cont++)
             {
-                parametro_jason = instruccion_jason['lista_paramentros'][cont];
+                parametro_jason = instruccion_jason['parametros'][cont];
                 lista_parametros.push(this.fabrica_expresiones(parametro_jason));
             }
 
-            return new Sentencia_Llamada(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['identificador'], instruccion_jason['lista_acceso']);
+            return new Sentencia_Llamada(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['identificador'], lista_parametros);
         }
         else
         {
@@ -159,11 +192,21 @@ class AST
         }
         else if(expresion_jason['etiqueta'] == 'sentencia_acceso')
         {
-            return new Sentencia_Acceso(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['identificador'],expresion_jason['lista_acceso']);
+            var lista_accesos : Array<Tipo_Acceso>;
+            var tipo_acceso_jason : JSON;
+
+            lista_accesos = new Array<Tipo_Acceso>();
+
+            for(var cont = 0; cont < expresion_jason['lista_acceso'].length; cont++)
+            {
+                tipo_acceso_jason = expresion_jason['lista_acceso'][cont];
+                lista_accesos.push(<Tipo_Acceso>this.fabrica_expresiones(tipo_acceso_jason));
+            }
+            return new Sentencia_Acceso(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['identificador'],lista_accesos);
         }
         else if(expresion_jason['etiqueta'] == 'tipo_acceso')
         {
-            return new Tipo_Acceso(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['tipo'], this.fabrica_expresiones(expresion_jason['expresion1']), this.fabrica_expresiones(expresion_jason['expresion2']), expresion_jason['expresion3']);
+            return new Tipo_Acceso(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['tipo'], expresion_jason['acceso0'] == null ? undefined : this.fabrica_expresiones(expresion_jason['acceso0']), expresion_jason['acceso1'] == null ? undefined :  this.fabrica_expresiones(expresion_jason['acceso1']), expresion_jason['acceso2']);
         }
         else if(expresion_jason['etiqueta'] == 'sentencia_llamada')
         {
@@ -172,14 +215,13 @@ class AST
 
             lista_parametros = new Array<Expresion>();
 
-
-            for(var cont = 0; cont < expresion_jason['lista_paramentros'].length; cont++)
+            for(var cont = 0; cont < expresion_jason['parametros'].length; cont++)
             {
-                parametro_jason = expresion_jason['lista_paramentros'][cont];
+                parametro_jason = expresion_jason['parametros'][cont];
                 lista_parametros.push(this.fabrica_expresiones(parametro_jason));
             }
 
-            return new Sentencia_Llamada(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['identificador'],expresion_jason['lista_acceso']);
+            return new Sentencia_Llamada(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['identificador'],lista_parametros);
         }
         else if(expresion_jason['etiqueta'] == 'dato_primitivo')
         {   

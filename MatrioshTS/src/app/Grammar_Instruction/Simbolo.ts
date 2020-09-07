@@ -1,5 +1,6 @@
 import Tipo from './Tipo';
-import Instruction from '../../../dist/out-tsc/src/app/Grammar_Instruction/Instruction';
+import Funcion from './Funcion';
+import Instruction from './Instruction';
 
 class Simbolo
 {
@@ -12,7 +13,7 @@ class Simbolo
     private identificador : String;
     private valor : Object;
 
-    private lista_funcones : Array<Instruction>;
+    private lista_funciones : Array<Funcion>;
 
     private constante : Boolean;
             
@@ -26,7 +27,7 @@ class Simbolo
 
         this.valor = undefined;
 
-        this.lista_funcones = new Array<Instruction>();
+        this.lista_funciones = new Array<Funcion>();
 
         this.constante = false;                        
     }
@@ -51,14 +52,19 @@ class Simbolo
         this.columna = columna;
     }
     
-    public getRol() 
-    {
-        return this.rol;
-    }
-
     public getTipo() 
     {
         return this.tipo;
+    }
+
+    public setTipo(tipo : Tipo) 
+    {
+        this.tipo = tipo;
+    }
+
+    public getRol() 
+    {
+        return this.rol;
     }
 
     public getIdentificador() 
@@ -83,6 +89,27 @@ class Simbolo
     {
         this.constante = p_constante;
     }
+
+    public getListaFunciones()
+    {
+        return this.lista_funciones;
+    }
+    
+    public getFuncion(p_identificador : String)
+    {
+        let _return : Funcion;        
+        
+        for(var x : number = 0; x < this.lista_funciones.length; x++)
+        {
+            let funcion_actual : Funcion = this.lista_funciones[x];
+            if(funcion_actual.getIdentificador() == p_identificador)
+            {
+                return funcion_actual.getThis();
+            }
+        }
+        
+        return _return;
+    }  
     
     /*
     public Object getFirstValor() {
@@ -108,7 +135,7 @@ class Simbolo
     }
     */
     
-    public toString()
+    public tostring()
     {
         return this.valor.toString();
     }

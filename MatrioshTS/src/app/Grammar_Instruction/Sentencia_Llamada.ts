@@ -9,7 +9,10 @@ class Sentencia_Llamada extends Instruction
 {   
     private identificador : String;
     private lista_parametros : Array<Instruction>;
-    private lista_parametros_enviar : Array<Simbolo> ;
+    private lista_parametros_enviar : Array<Simbolo>;
+
+    private global : Boolean;
+    private padre : Simbolo;
       
     public constructor(p_fila : number, p_columna : number, p_identificador : String, p_lista_parametros : Array<Instruction> )
     {
@@ -18,6 +21,9 @@ class Sentencia_Llamada extends Instruction
         this.identificador = p_identificador;
         this.lista_parametros = p_lista_parametros;
         this.lista_parametros_enviar = new Array<Simbolo>();
+
+        this.global = true;
+        this.padre = undefined;
     }  
     
     public ejecutar(entorno_padre : Map<String, Simbolo> , salida : Middle) 
@@ -31,9 +37,17 @@ class Sentencia_Llamada extends Instruction
             {
                 System.out.println("Lamando a la función: " + identificador);
             }*/
-            
-            funcion_actual = Tabla_Simbolos.getInstance().getFuncion(this.identificador);
-            
+
+            if(this.global)
+            {
+                funcion_actual = Tabla_Simbolos.getInstance().getFuncion(this.identificador);
+            }
+            else
+            {
+                funcion_actual = this.padre.getFuncion(this.identificador);
+                this.global = true;
+            }
+                       
             if(funcion_actual == null)
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
@@ -43,7 +57,6 @@ class Sentencia_Llamada extends Instruction
                 return _return;            
             }                        
             
-            //Llenamos la lista de parametros que se enviaran al metodo
             for(var x : number = 0; x < this.lista_parametros.length; x++)
             {
                 var tmp_val : Simbolo = this.lista_parametros[x].ejecutar(entorno_padre, salida);
@@ -57,20 +70,20 @@ class Sentencia_Llamada extends Instruction
                     return _return;
                 }
 
-                if(tmp_val.getRol() != tipo_rol.valor || tmp_val.getRol() != tipo_rol.arreglo)
+                if(tmp_val.getRol() != tipo_rol.valor && tmp_val.getRol() != tipo_rol.arreglo)
                 {
                     this.lista_parametros_enviar = new Array<Simbolo>();
                     return tmp_val;
                 }
                 
                 this.lista_parametros_enviar.push(tmp_val);
-            }                    
-            
-            var _result :  Simbolo = funcion_actual.pasarParametros(this.lista_parametros_enviar,salida);            
+            }       
+
+            var _result :  Simbolo = funcion_actual.pasarParametros(this.lista_parametros_enviar,salida);
             
             this.lista_parametros_enviar = new Array<Simbolo>();
             
-            if(tmp_val.getRol() != tipo_rol.valor || tmp_val.getRol() != tipo_rol.arreglo)
+            if(_result.getRol() != tipo_rol.aceptado)
             {
                 return _result;
             }
@@ -89,7 +102,17 @@ class Sentencia_Llamada extends Instruction
         } 
        
     }
+
+    public setGlobal(global : Boolean)
+    {
+        this.global = global;
+    }
     
+    public setPadre(padre : Simbolo)
+    {
+        this.padre = padre;
+    }
+
     public getThis() 
     {
         var lista_clon : Array<Instruction> =  new Array<Instruction>();

@@ -4,15 +4,13 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { MenuComponent } from '../Components/menu/menu.component';
-import { TextAreaComponent } from '../Components/text-area/text-area.component';
-import { TerminalComponent } from '../Components/terminal/terminal.component';
+import {FormularioEjecutarComponent} from '../Components/formulario-ejecutar/formulario-ejecutar.component';
 
 @NgModule({
   declarations: 
   [
     MenuComponent,
-    TextAreaComponent,
-    TerminalComponent,
+    FormularioEjecutarComponent,
   ]
   ,
   imports: 
@@ -24,8 +22,7 @@ import { TerminalComponent } from '../Components/terminal/terminal.component';
   exports:
   [
     MenuComponent,
-    TextAreaComponent,
-    TerminalComponent,
+    FormularioEjecutarComponent,
   ]
 })
 export class ComponentsModule { }

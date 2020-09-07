@@ -4,20 +4,16 @@ import Simbolo from './Simbolo';
 import Middle from './Middle';
 import Tipo from './Tipo';
 import Tipo_Acceso from './Tipo_Acceso';
+import Tabla_Simbolos from './Tabla_Simbolos';
 
 class Sentencia_Acceso extends Instruction
 {
-    protected identificadores : String[];
-
     protected identificador : String;
     protected lista_accesos : Array<Tipo_Acceso>;
-    protected lista_valores : Number;
-
 
     constructor(p_fila: number, p_columna: number, p_id : String, p_lista_accesos? : Array<Tipo_Acceso>)
     {
         super(p_fila,p_columna);
-
         this.identificador = p_id;
         this.lista_accesos = p_lista_accesos;
     }
@@ -36,13 +32,20 @@ class Sentencia_Acceso extends Instruction
             }
             else
             {
-                _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                _return.setFila(this.fila);
-                _return.setColumna(this.columna);
-                _return.setValor("La variable: \"" + this.identificador + "\" NO se encuentra en el entorno local.");
-                return _return;
+                if(Tabla_Simbolos.getInstance().getStack().existsSimbolo(this.identificador))
+                {
+                    acceso = entorno_padre.get(this.identificador);
+                }
+                else
+                {
+                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    _return.setValor("La variable: \"" + this.identificador + "\" NO se encuentra en el entorno local.");
+                    return _return;
+                }
             }
-
+            
             if(this.lista_accesos.length == 0)
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
@@ -60,23 +63,37 @@ class Sentencia_Acceso extends Instruction
             {
                 if(acceso.getRol() == tipo_rol.valor)
                 {
-    
+                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    _return.setValor("Operador Acceso: No existen accesos definidos para un valor primitivo.");
+                    return _return;
                 }
                 else if(acceso.getRol() == tipo_rol.arreglo)
                 {
-    
+                    this.lista_accesos[cont].setPadre(acceso);
+                    acceso = this.lista_accesos[cont].ejecutar(entorno_padre, salida);
                 }
                 else if(acceso.getRol() == tipo_rol.type)
                 {
-                    
+                    this.lista_accesos[cont].setPadre(acceso);
+                    acceso = this.lista_accesos[cont].ejecutar(entorno_padre, salida);
+                }
+                else if(acceso.getRol() == tipo_rol.error)
+                {
+                    return acceso;
                 }
                 else
                 {
-    
+                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    _return.setValor("Operador Acceso: No existen accesos definidos.");
+                    return _return;
                 }
             }
 
-
+            return acceso;
         }
         catch(Exception)
         {

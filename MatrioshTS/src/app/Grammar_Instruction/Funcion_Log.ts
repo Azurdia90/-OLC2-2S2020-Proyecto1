@@ -1,211 +1,163 @@
 import Funcion from "./Funcion";
 import Instruction from './Instruction';
+import Middle from './Middle';
+import Simbolo from './Simbolo';
+import Tipo from './Tipo';
 
 class Funcion_Log extends Funcion
 {
-    
-    constructor(p_fila : number, p_columna : number, p_id : String, p_lista_parametros? : Array<Instruction>)
+    private valor_imprimir : Simbolo;
+
+    constructor(p_fila : number, p_columna : number)
     {
-        super(p_fila, p_columna, "log", p_lista_parametros, undefined);
+        super(p_fila, p_columna, "log", new Array<Instruction>(), undefined);
+    }
+
+    public pasarParametros(lista_parametros_enviados : Array<Simbolo>, salida : Middle)
+    {
+        let _return : Simbolo;
+        
+        if(lista_parametros_enviados.length == 0)
+        {
+            _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
+            _return.setFila(this.fila);
+            _return.setColumna(this.columna);
+            _return.setValor("Función Log: valor vacio");
+            return _return;
+        }else if (lista_parametros_enviados.length > 1)
+        {
+            _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
+            _return.setFila(this.fila);
+            _return.setColumna(this.columna);
+            _return.setValor("Función Log: se envió mas de un valor");
+            return _return;
+        }
+        else
+        {
+            this.valor_imprimir = lista_parametros_enviados[0];
+
+            _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4");
+            _return.setFila(this.fila);
+            _return.setColumna(this.columna); 
+            _return.setValor("Paso de Parametros Succesful");
+            return _return;
+        }      
     }
     
-    public Simbolo ejecutar(HashMap<String, Simbolo> entorno_local, Input salida) 
+    public ejecutar(entorno_local : Map<String, Simbolo>, salida : Middle) 
     {
-        Simbolo _return = null;
-        Simbolo tmp_val = null;
-        try
-        {
-            if(valor == null)
-            {
-                _return = new Simbolo(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.detener),"33-12");
-                _return.setFila(this.fila);
-                _return.setColumna(this.columna);
-                _return.setFirstValor("Declaracion: valor vacio");
-                return _return;
-            }
-            else
-            {
-                tmp_val = valor.ejecutar(entorno_local, salida);
-            }
-                                                  
-            if(tmp_val.getTipo().Equals(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.detener)))                
-            {
-                return tmp_val;
-            }
-            
-            if(tmp_val.getRol()== Tabla_Enums.tipo_Simbolo.vector && tmp_val.getValor().size() == 1)
-            {
-                if(tmp_val.getFirstValor() instanceof Simbolo)
-                {
-                    salida.ConsolaAppend(((Simbolo)tmp_val.getFirstValor()).getFirstValor().toString());
-                }
-                else
-                {
-                    salida.ConsolaAppend(tmp_val.getFirstValor().toString());
-                }
-            }
-            else if(tmp_val.getRol()== Tabla_Enums.tipo_Simbolo.vector && tmp_val.getValor().size() > 1)
-            {                
+        let _return : Simbolo;
 
-                String contenido = "[";
+        try
+        {  
+            //console.log(this.valor_imprimir);
+            
+            if(this.valor_imprimir.getRol()== tipo_rol.valor)
+            {
+                salida.setOuput(this.valor_imprimir.tostring());
+            }
+            else if(this.valor_imprimir.getRol()== tipo_rol.arreglo)
+            {                
+                var contenido : String = "[";
                 
-                for(int x = 0; x < tmp_val.getValor().size(); x++)
+                for(var x = 0; x < (<Array<Simbolo>>this.valor_imprimir.getValor()).length; x++)
                 {
                     if(x >0)
                     {   
-                        if(tmp_val.getValor().get(x) instanceof Simbolo)
+                        if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.arreglo)
                         {
-                            contenido = contenido + "," + ((Simbolo)tmp_val.getValor().get(x)).getFirstValor().toString();
+                            contenido = contenido.concat(",", this.printlist(this.valor_imprimir.getValor()[x]).toString());
+                        }
+                        else if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.type)
+                        {
+                            contenido = contenido.concat(",",this.valor_imprimir.getValor()[x].tostring());
                         }
                         else
                         {
-                            contenido = contenido + "," + tmp_val.getValor().get(x).toString();
+                            contenido = contenido.concat(",",this.valor_imprimir.getValor()[x].tostring());
                         }
                     }
                     else
                     {
-                        if(tmp_val.getValor().get(x) instanceof Simbolo)
+                        if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.arreglo)
                         {
-                            contenido = contenido + ((Simbolo)tmp_val.getValor().get(x)).getFirstValor().toString();
+                            contenido = contenido.concat('', this.printlist(this.valor_imprimir.getValor()[x].toString()).toString());
+                        }
+                        else if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.type)
+                        {
+                            contenido = contenido.concat(this.valor_imprimir.getValor()[x].tostring());
                         }
                         else
                         {
-                            contenido = contenido +  tmp_val.getValor().get(x).toString();
+                            contenido = contenido.concat(this.valor_imprimir.getValor()[x].totring());
                         }
                     }
                 }
                 
-                contenido = contenido + "]";                                    
+                contenido = contenido.concat("]");                                    
                 
-                salida.ConsolaAppend(contenido);                
+                salida.setOuput(contenido);                
             }
-            else if(tmp_val.getRol()== Tabla_Enums.tipo_Simbolo.lista && tmp_val.getValor().size() == 1)
+            else if(this.valor_imprimir.getRol() == tipo_rol.type)
             {
-                salida.ConsolaAppend(tmp_val.getFirstValor().toString());
-            }
-            else if(tmp_val.getRol()== Tabla_Enums.tipo_Simbolo.lista && tmp_val.getValor().size() > 1)
-            {
-                String contenido = "[";
-                
-                for(int x = 0; x < tmp_val.getValor().size(); x++)
-                {
-                    if(x >0)
-                    {
-                        if(((Simbolo)tmp_val.getValor().get(x)).getValor().size() > 1)
-                        {
-                            contenido = contenido + "," + printlist((Simbolo)tmp_val.getValor().get(x));
-                        }
-                        else
-                        {
-                            contenido = contenido + "," + ((Simbolo)tmp_val.getValor().get(x)).getFirstValor().toString();
-                        }                        
-                    }
-                    else
-                    {
-                        if(((Simbolo)tmp_val.getValor().get(x)).getValor().size() > 1)
-                        {
-                            contenido = contenido + printlist((Simbolo)tmp_val.getValor().get(x));
-                        }
-                        else
-                        {
-                            contenido = contenido + ((Simbolo)tmp_val.getValor().get(x)).getFirstValor().toString();
-                        }
-                    }
-                }
-                
-                contenido = contenido + "]";                                    
-                
-                salida.ConsolaAppend(contenido);                   
-            }
-            else if(tmp_val.getRol()== Tabla_Enums.tipo_Simbolo.matriz)
-            {
-                String cadena_contenido = "";
-                String cadena_encabezado = "     ";
-                String cadena_fila = "";
-                String cadena_columna = "";                                
-                
-                for(int x = 0; x < tmp_val.getValor().size(); x++) //recorrido de la matriz
-                {                    
-                    cadena_encabezado = cadena_encabezado.concat("[," + (x+1) + "]    ");
-                }
-                
-                Simbolo col_tmp = (Simbolo) tmp_val.getValor().get(0);
-                int col_tam  =  tmp_val.getValor().size();
-                int fila_tam =  col_tmp.getValor().size();                
-                
-                for(int x = 0; x < fila_tam; x++)
-                {                                        
-                    for(int y = 0; y < col_tam; y++)
-                    {
-                        Simbolo lista_col = (Simbolo) tmp_val.getValor().get(y);
-                        
-                        if(y >0)
-                        {
-                            cadena_fila = cadena_fila.concat("     " + ((Simbolo)lista_col.getValor().get(x)).getFirstValor().toString());
-                        }
-                        else
-                        {
-                            cadena_fila = cadena_fila.concat("[," + (x+1) + "]  ");
-                            cadena_fila = cadena_fila.concat(((Simbolo)lista_col.getValor().get(x)).getFirstValor().toString());                            
-                        }
-                    }         
-                    cadena_fila = cadena_fila.concat("\n");
-                }
-                    
-                                                                    
-                cadena_contenido = cadena_encabezado + "\n";
-                cadena_contenido = cadena_contenido + cadena_fila;
-                
-                salida.ConsolaAppend(cadena_contenido);
+                salida.setOuput(this.valor_imprimir.toString());
             }
             else
             {
-                salida.ConsolaAppend("Excepción: Tipo de dato no recnocido, fila: " + this.fila + " columna: " + this.columna);
+                salida.setOuput("Excepción: Tipo de dato no recnocido, fila: " + this.fila + " columna: " + this.columna);
             }
             
-            _return = new Simbolo(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.nulo),"10-4");
+            _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4");
             _return.setFila(this.fila);
             _return.setColumna(this.columna);
-            _return.setFirstValor("Imprimir: Sentencia realizada correctamente.");
+            _return.setValor("Imprimir: Sentencia realizada correctamente.");
             return _return;
             
         }
-        catch(Exception e)
+        catch(Exception)
         {
-            _return = new Simbolo(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.detener,"error"), "33-12");
+            _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
             _return.setFila(this.fila);
             _return.setColumna(this.columna);
-            _return.setFirstValor("Error en Sentencia Imprimir: " + e.getMessage());
+            _return.setValor("Error en Sentencia Imprimir: " + Exception);
             return _return;
         }
     }    
     
-    private String printlist(Simbolo sim_list)
+    private printlist(sim_list : Simbolo)
     {
-        String lista_tmp = "[";
+        let lista_tmp : String = "[";
         
-        for(int x = 0; x < sim_list.getValor().size(); x++)
+        for(var x = 0; x < (<Array<Simbolo>>sim_list.getValor()).length; x++)
         {
             if( x > 0)                
             {
-                if(((Simbolo)sim_list.getValor().get(x)).getValor().size() > 1)
+                if((sim_list.getValor()[x]).getRol() == tipo_rol.arreglo)
                 {
-                    lista_tmp = lista_tmp.concat("," + printlist((Simbolo)sim_list.getValor().get(x)));
+                    lista_tmp = lista_tmp.concat("," , this.printlist(sim_list.getValor()[x]).toString());
+                }
+                else if((sim_list.getValor()[x]).getRol() == tipo_rol.type)
+                {
+                    lista_tmp = lista_tmp.concat("," , (sim_list.getValor()[x]).tostring());
                 }
                 else
                 {
-                    lista_tmp = lista_tmp.concat("," + ((Simbolo)sim_list.getValor().get(x)).getFirstValor().toString());
+                    lista_tmp = lista_tmp.concat("," ,(sim_list.getValor()[x]).tostring());
                 }
             }
             else
             {
-                if(((Simbolo)sim_list.getValor().get(x)).getValor().size() > 1)
+                if((sim_list.getValor()[x]).getRol() == tipo_rol.arreglo)
                 { 
-                    lista_tmp = lista_tmp.concat(printlist((Simbolo)sim_list.getValor().get(x)));    
+                    lista_tmp = lista_tmp.concat('', this.printlist(sim_list.getValor()[x]).toString());    
                 }    
+                else if((sim_list.getValor()[x]).getRol() == tipo_rol.type)
+                {
+                    lista_tmp = lista_tmp.concat((sim_list.getValor()[x]).tostring());
+                }
                 else
                 {
-                    lista_tmp = lista_tmp.concat(((Simbolo)sim_list.getValor().get(x)).getFirstValor().toString());
+                    lista_tmp = lista_tmp.concat((sim_list.getValor()[x]).tostring());
                 }
             }            
         }
@@ -217,14 +169,7 @@ class Funcion_Log extends Funcion
 
     public getThis() 
     {
-        var clon_lista_parametros : Array<Instruction>  = new Array<Instruction>();
-        
-        for(var x = 0; x < this.lista_parametros.length; x++)
-        {
-            clon_lista_parametros.push(this.lista_parametros[x].getThis());
-        }
-
-        return new Funcion_Log(this.fila,this.columna,"log",clon_lista_parametros);
+        return new Funcion_Log(this.fila,this.columna);
     }
     
 }
