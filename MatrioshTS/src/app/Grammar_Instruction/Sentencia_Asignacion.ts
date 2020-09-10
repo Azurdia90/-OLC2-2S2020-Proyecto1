@@ -55,26 +55,29 @@ class Sentencia_Asignacion extends Instruction
 
             if(_val_fin.getRol() != tipo_rol.valor && _val_fin.getRol() != tipo_rol.arreglo)
             {
-                return _acceso
+                return _val_fin;
             }
 
             if(_acceso.getTipo().getTipo() !=  _val_fin.getTipo().getTipo())
             {
                 if(_val_fin.getTipo().getTipo() != tipo_dato.NULO)
                 {
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("El tipo de la variable es diferente al valor a asignar.");
-                    nuevo_simbolo.setFila(this.fila);
-                    nuevo_simbolo.setColumna(this.columna);
-                    return nuevo_simbolo;
+                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    _return.setValor("El tipo de la variable es diferente al valor a asignar.");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    return _return;
                 }
             } 
+
+            _acceso.setTipo(_val_fin.getTipo());
+            _acceso.setValor(_val_fin.getValor());
             
-            var simbolo_aceptado : Simbolo = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4"); 
-            simbolo_aceptado.setValor("Asignación Succesful");
-            simbolo_aceptado.setFila(this.fila);
-            simbolo_aceptado.setColumna(this.columna);
-            return nuevo_simbolo;
+            _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4"); 
+            _return.setValor("Asignación Succesful");
+            _return.setFila(this.fila);
+            _return.setColumna(this.columna);
+            return _return;
         }
         catch(Exception)
         {

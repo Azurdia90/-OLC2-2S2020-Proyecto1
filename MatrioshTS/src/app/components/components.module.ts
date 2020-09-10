@@ -3,14 +3,18 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { MenuComponent } from '../Components/menu/menu.component';
+import {FormularioTraducirComponent} from '../Components/formulario-traducir/formulario-traducir.component';
 import {FormularioEjecutarComponent} from '../Components/formulario-ejecutar/formulario-ejecutar.component';
+import {FormularioTablaSimbolosComponent} from '../Components/formulario-tabla-simbolos/formulario-tabla-simbolos.component';
+import {FormularioTablaErroresComponent} from '../Components/formulario-tabla-errores/formulario-tabla-errores.component';
 
 @NgModule({
   declarations: 
   [
-    MenuComponent,
+    FormularioTraducirComponent,
     FormularioEjecutarComponent,
+    FormularioTablaSimbolosComponent,
+    FormularioTablaErroresComponent,
   ]
   ,
   imports: 
@@ -21,8 +25,10 @@ import {FormularioEjecutarComponent} from '../Components/formulario-ejecutar/for
   ],
   exports:
   [
-    MenuComponent,
+    FormularioTraducirComponent,
     FormularioEjecutarComponent,
+    FormularioTablaSimbolosComponent,
+    FormularioTablaErroresComponent,
   ]
 })
 export class ComponentsModule { }

@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { MenuComponent } from './menu.component';
+import { FormularioTraducirComponent } from './formulario-traducir.component';
 
-describe('MenuComponent', () => {
-  let component: MenuComponent;
-  let fixture: ComponentFixture<MenuComponent>;
+describe('FormularioTraducirComponent', () => {
+  let component: FormularioTraducirComponent;
+  let fixture: ComponentFixture<FormularioTraducirComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MenuComponent ],
+      declarations: [ FormularioTraducirComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MenuComponent);
+    fixture = TestBed.createComponent(FormularioTraducirComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

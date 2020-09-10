@@ -153,6 +153,12 @@ SENTENCIA
       {$$ = $1;} 
       | SENTENCIA_ACCESO s_dot_coma
       {$$ = $1;} 
+      | SENTENCIA_BREAK s_dot_coma
+      {$$ = $1;}
+      | SENTENCIA_CONTINUE s_dot_coma
+      {$$ = $1;}
+      | SENTENCIA_RETURN s_dot_coma
+      {$$ = $1;}
     ;
 
 TIPO
@@ -271,7 +277,7 @@ SENTENCIA_BREAK
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Break(linea,columna);
+        $$ = {etiqueta: 'sentencia_break', linea: linea, columna: columna};
       }
     ;
 
@@ -280,22 +286,22 @@ SENTENCIA_CONTINUE
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Continue(linea,columna);
+        $$ = {etiqueta: 'sentencia_continue', linea: linea, columna: columna};
       }
     ;
 
 SENTENCIA_RETURN
-    : r_return
+    : r_return EXPRESION
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Return(linea,columna,null);
+        $$ = {etiqueta: 'sentencia_return', linea: linea, valor: $2};
       }
-    | r_return EXPRESION
+    | r_return
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = new Sentencia_Return(linea,columna,$2);
+        $$ = {etiqueta: 'sentencia_return', linea: linea, valor: null};
       }
     ;
 
