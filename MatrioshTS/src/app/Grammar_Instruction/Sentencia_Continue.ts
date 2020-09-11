@@ -5,7 +5,7 @@ import Tipo from './Tipo';
 
 class Sentencia_Continue extends Instruction
 {
-    constructor(p_fila : Number, p_columna : Number)
+    constructor(p_fila : number, p_columna : number)
     {
         super(p_fila.valueOf(),p_columna.valueOf());
     }

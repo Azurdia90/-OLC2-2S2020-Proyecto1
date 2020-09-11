@@ -1,14 +1,15 @@
 
+<ion-item>
+  <h1>Tabla de Errores</h1>
+</ion-item>
+<ion-item>
+  {{lista.length}}
+  <ngx-datatable [rows] = "lista" [headerHeight] = "'auto'" [rowHeight] = "'auto'"  [columnMode] = "'force'">
+    <ngx-datatable-column name = 'Tipo'> </ngx-datatable-column>
+    <ngx-datatable-column name = 'Fila'> </ngx-datatable-column>
+    <ngx-datatable-column name = 'Columna'> </ngx-datatable-column>
+    <ngx-datatable-column name = 'Identificador'> </ngx-datatable-column>
+    <ngx-datatable-column name = 'Descripción'> </ngx-datatable-column>
+  </ngx-datatable>
+</ion-item>
 
-<ion-label > valores: {{lista}}</ion-label>
-
-<section>
-  <label for = "Tabla_Errores"> Tabla Errores</label>
-  <option *ngFor = "let status of lista">
-    <!-- <span>{{ lista.linea }}</span>
-    <span>{{ lista.columna }}</span>
-    <span>{{ lista.identificador }}</span>
-    <span>{{ lista.tipo }}</span>
-    <span>{{ lista.descripcion }}</span> -->
-  </option>
-</section>

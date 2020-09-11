@@ -9,7 +9,6 @@ import { FormBuilder } from '@angular/forms';
 })
 export class HomePage 
 {
- 
 
   constructor(private menuController: MenuController,private formBuilder: FormBuilder) 
   {

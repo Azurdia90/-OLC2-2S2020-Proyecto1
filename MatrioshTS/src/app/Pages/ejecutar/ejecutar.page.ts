@@ -13,6 +13,7 @@ export class EjecutarPage implements OnInit {
   {
     this.buildForm();
   }
+  
   ngOnInit()
   {
 

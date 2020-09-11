@@ -32,8 +32,8 @@ import Sentencia_Continue from './Sentencia_Continue';
 import Sentencia_Return from './Sentencia_Return';
 import { sortAndDeduplicateDiagnostics } from 'typescript';
 import Funcion_Matriosh from './Funcion_Matriosh';
-import Type_Error from './Type_Error';
 import Tabla_Errores from './Tabla_Errores';
+import { Errores } from '../Interfaces/errores';
 
 class AST
 {
@@ -61,7 +61,6 @@ class AST
     public recorrido1()
     {
         var _result : Simbolo;
-        var error_encontrado : Type_Error;
 
         for(var r1 = 0; r1 < this.lista_instrucciones.length; r1++)
         {
@@ -77,22 +76,22 @@ class AST
 
             if(_result != undefined && _result.getRol() == tipo_rol.error)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),_result.getValor().toString());
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: _result.getValor().toString()};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.detener)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Detener.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Detener."};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.continuar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Continuar.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Continuar."};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.retornar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Retornar");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Retornar"};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else
@@ -105,7 +104,6 @@ class AST
     public recorrido2()
     {
         var _result : Simbolo;
-        var error_encontrado : Type_Error;
 
         for(var r2 = 0; r2 < this.lista_instrucciones.length; r2++)
         {
@@ -121,22 +119,22 @@ class AST
 
             if(_result != undefined && _result.getRol() == tipo_rol.error)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),_result.getValor().toString());
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: _result.getValor().toString()};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.detener)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Detener.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Detener."};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.continuar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Continuar.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Continuar."};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.retornar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Retornar");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Retornar"};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else
@@ -149,7 +147,6 @@ class AST
     public recorrido3()
     {
         var _result : Simbolo;
-        var error_encontrado : Type_Error;
 
         for(var r3 = 0; r3 < this.lista_instrucciones.length; r3++)
         {
@@ -164,22 +161,22 @@ class AST
 
             if(_result != undefined && _result.getRol() == tipo_rol.error)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),_result.getValor().toString());
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: _result.getValor().toString()};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.detener)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Detener.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Detener."};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.continuar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Continuar.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Continuar."};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.retornar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Retornar");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Retornar"};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else
@@ -192,7 +189,6 @@ class AST
     public recorridof()
     {
         var _result : Simbolo;
-        var error_encontrado : Type_Error;
 
         for(var f = 0; f < this.lista_instrucciones.length; f++)
         {
@@ -207,22 +203,22 @@ class AST
 
             if(_result != undefined && _result.getRol() == tipo_rol.error)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),_result.getValor().toString());
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: _result.getValor().toString()};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.detener)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Detener.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Detener."};
                 Tabla_Errores.getInstance().push(error_encontrado);  
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.continuar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Continuar.");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Continuar."};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else if(_result != undefined && _result.getRol() == tipo_rol.retornar)
             {
-                error_encontrado = new Type_Error("","Análisis Semántico MatrioshTS",_result.getFila(), _result.getColumna(),_result.getTipo().getTraduccion(),"NO se permite la sentencia Retornar");
+                var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: "NO se permite la sentencia Retornar"};
                 Tabla_Errores.getInstance().push(error_encontrado); 
             }
             else

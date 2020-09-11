@@ -1,6 +1,6 @@
-import Type_Error from './Type_Error';
+import { Errores } from '../Interfaces/errores';
 
-class Tabla_Errores extends Array<Type_Error>
+class Tabla_Errores extends Array<Errores>
 {
     private static _instance : Tabla_Errores = new Tabla_Errores();
         
@@ -14,11 +14,9 @@ class Tabla_Errores extends Array<Type_Error>
         }         
     }
 
-    public getJson()
+    public static clear()
     {
-        var _return : JSON;
-
-        
+        this._instance = new Tabla_Errores(); 
     }
 }
 

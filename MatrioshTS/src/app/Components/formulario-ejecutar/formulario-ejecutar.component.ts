@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 import AST from '../../Grammar_Instruction/AST';
 import Middle from '../../Grammar_Instruction/Middle';
+import Tabla_Errores from '../../Grammar_Instruction/Tabla_Errores';
 
 declare const Grammar_MatrioshTS: any;
 
@@ -38,13 +39,14 @@ export class FormularioEjecutarComponent implements OnInit
     event.preventDefault();
     const value = this.formulario_ejecutar.value;
 
+    Tabla_Errores.clear();
     Middle.getInstance().clear();
     Middle.getInstance().setInput(value['textarea']);
     var resultado = Grammar_MatrioshTS.parse(Middle.getInstance().getInput());
     var ast : AST = new AST(resultado,false);
     ast.build_ast();
     ast.exec_ast();
-    this.imprimirConsola(value );
+    this.imprimirConsola(value);
   }
 
   imprimirConsola(value : FormGroup)
