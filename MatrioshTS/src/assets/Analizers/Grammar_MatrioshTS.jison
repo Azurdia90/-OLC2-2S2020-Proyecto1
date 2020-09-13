@@ -272,6 +272,54 @@ SENTENCIA_ASIGNACION
     }
     ;
 
+SENTENCIA_IF
+    : r_if s_par_open EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close LISTA_ELSE_IF r_else s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_if', linea: linea, columna: columna, condicion : $3, sentencias1: $6, lista_else_if: $8, sentencias2: $11};
+      }
+    | r_if s_par_open EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close r_else s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_if', linea: linea, columna: columna, condicion : $3, sentencias1: $6, lista_else_if: null, sentencias2: $10};
+      }
+    | r_if s_par_open EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close LISTA_ELSE_IF
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_if', linea: linea, columna: columna, condicion : $3, sentencias1: $6, lista_else_if: $8, sentencias2: null};
+      }
+    | r_if s_par_open EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_if', linea: linea, columna: columna, condicion : $3, sentencias1: $6, lista_else_if: null, sentencias2: null};      
+      }
+    ;
+
+LISTA_ELSE_IF
+    : LISTA_ELSE_IF SENTENCIA_ELSE_IF
+      {
+        $1.push($2);
+        $$ = $1;
+      }
+    | SENTENCIA_ELSE_IF
+      {
+        $$ = [$1];
+      }
+    ;
+
+SENTENCIA_ELSE_IF
+    : r_else r_if s_par_open EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_if', linea: linea, columna: columna, condicion : $4, sentencias1: $7, lista_else_if: null, sentencias2: null};
+      }
+    ;
+
 SENTENCIA_BREAK
     : r_break
       {

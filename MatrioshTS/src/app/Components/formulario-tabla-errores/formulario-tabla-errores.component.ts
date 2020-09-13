@@ -25,7 +25,7 @@ export class FormularioTablaErroresComponent implements OnInit
 
   private buildForm() 
   {
-  
+    this.lista = Tabla_Errores.getInstance();
   }
 
   header(dat) {
