@@ -31,7 +31,7 @@
 "do"                  return 'r_do'
 "while"               return 'r_while'
 "for"                 return 'r_for'
-"in"                  return 'r_if'
+"in"                  return 'r_in'
 "of"                  return 'r_of'
 "continue"            return 'r_continue'
 "break"               return 'r_break'
@@ -149,6 +149,18 @@ SENTENCIA
       {$$ = $1;}
       | SENTENCIA_ASIGNACION s_dot_coma
       {$$ = $1;}  
+      | SENTENCIA_IF 
+      {$$ = $1;}
+      | SENTENCIA_SWITCH
+      {$$ = $1;}
+      | SENTENCIA_WHILE
+      {$$ = $1;}
+      | SENTENCIA_DO_WHILE
+      {$$ = $1;}
+      | SENTENCIA_FOR
+      {$$ = $1;}
+      | SENTENCIA_FOR_LIST
+      {$$ = $1;}
       | SENTENCIA_LLAMADA s_dot_coma
       {$$ = $1;} 
       | SENTENCIA_ACCESO s_dot_coma
@@ -316,9 +328,103 @@ SENTENCIA_ELSE_IF
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'sentencia_if', linea: linea, columna: columna, condicion : $4, sentencias1: $7, lista_else_if: null, sentencias2: null};
+        $$ = {etiqueta: 'sentencia_if', linea: linea, columna: columna, condicion: $4, sentencias1: $7, lista_else_if: null, sentencias2: null};
       }
     ;
+
+SENTENCIA_SWITCH
+    : r_switch s_par_open EXPRESION s_par_close s_key_open LISTA_CASOS DEFECTO s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $6.push($7);
+        $$ = {etiqueta: 'sentencia_switch', linea: linea, columna: columna, condicion: $3, lista_casos: $6};
+      }
+    | r_switch s_par_open EXPRESION s_par_close s_key_open LISTA_CASOS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_switch', linea: linea, columna: columna, condicion: $3, lista_casos: $6};
+      }
+    ;
+
+LISTA_CASOS
+    : LISTA_CASOS CASO
+      {
+        $1.push($2);
+        $$ = $1;
+      }
+    | CASO
+      {
+        $$ = [$1];
+      }
+    ;
+
+CASO
+    : r_case EXPRESION s_doble_dot LISTA_SENTENCIAS
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_caso', linea: linea, columna: columna, default: false, condicion : $2, lista_sentencias: $4};
+      }
+    ;     
+
+DEFECTO
+    : r_default s_doble_dot LISTA_SENTENCIAS
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_caso', linea: linea, columna: columna, default: false, condicion : null, lista_sentencias: $3};
+      }
+    ;
+
+SENTENCIA_WHILE
+    : r_while s_par_open EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_while', linea: linea, columna: columna, condicion: $3, sentencias: $6};
+      }
+    ;
+
+SENTENCIA_DO_WHILE
+    : r_do s_key_open LISTA_SENTENCIAS s_key_close r_while s_par_open EXPRESION s_par_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_do_while', linea: linea, columna: columna, condicion: $7, sentencias: $3};
+      }
+    ;  
+
+SENTENCIA_FOR
+    : r_for s_par_open SENTENCIA_DECLARACION s_dot_coma EXPRESION s_dot_coma EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_for', linea: linea, columna: columna, sentencia1: $3, sentencia2: $5, sentencia3: $7, lista_sentencias: $10};   
+      }
+    |r_for s_par_open SENTENCIA_ASIGNACION s_dot_coma EXPRESION s_dot_coma EXPRESION s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_for', linea: linea, columna: columna, sentencia1: $3, sentencia2: $5, sentencia3: $7, lista_sentencias: $10};
+      }
+    ; 
+
+SENTENCIA_FOR_LIST
+    : r_for s_par_open let identificador r_in identidicador s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_for_list', linea: linea, columna: columna, id1: $4, id2: $6, lista_sentencias: $9};   
+      }
+    | r_for s_par_open let identificdor r_of identificador s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'sentencia_for_list', linea: linea, columna: columna, id1: $3, id2: $5, lista_sentencias: $9};
+      }
+    ; 
 
 SENTENCIA_BREAK
     : r_break
@@ -494,7 +600,7 @@ OPERADOR_INCREMENTO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'operador_incremento', linea: linea, columna: columna, expresion1: $1};
+        $$ = {etiqueta: 'operador_incremento', linea: linea, columna: columna, expresion1: {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: $1}};
       }  
     ;    
 
@@ -503,7 +609,7 @@ OPERADOR_DECREMENTO
       {
         var linea = yylineno;
         var columna = yyleng; 
-        $$ = {etiqueta: 'operador_decremento', linea: linea, columna: columna, expresion: $1};
+        $$ = {etiqueta: 'operador_decremento', linea: linea, columna: columna, expresion1: {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: $1}};
       }
     ; 
 

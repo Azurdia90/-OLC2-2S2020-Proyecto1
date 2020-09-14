@@ -52,11 +52,11 @@ class Sentencia_If extends Instruction
                 _return.setValor("No es posible realizar Sentencia If, expresión no da como resultado un valor booleano.");
                 return _return;
             }
-
+            //console.log(tmp_val);
             if (<Boolean>(tmp_val.getValor()))
             {
                 let entorno_actual: Map<String, Simbolo> = new Map<String, Simbolo>();
-                Tabla_Simbolos.getInstance().getStack().push(entorno_actual);
+                Tabla_Simbolos.getInstance().getStack()._push(this.fila,this.columna,entorno_actual);
 
                 var val_sentencia: Simbolo;
 
@@ -154,33 +154,34 @@ class Sentencia_If extends Instruction
                     }
                 }                                
                 
-                var entorno_actual : Map<String, Simbolo> = new HashMap<String, Simbolo>();
-                Tabla_Simbolos.getInstance().getStack().add(entorno_actual);
+                var entorno_actual : Map<String, Simbolo> = new Map<String, Simbolo>();
+                Tabla_Simbolos.getInstance().getStack()._push(this.fila,this.columna,entorno_actual);
 
-                Simbolo val_sentencia_else;
+                var val_sentencia_else : Simbolo;
 
-                for(int x = 0; x < lista_sentencias_else.size(); x++)
+                for(var x = 0; x < this.lista_sentencias_else.length; x++)
                 {
-                    val_sentencia_else = lista_sentencias_else.get(x).ejecutar(entorno_actual,salida);
-                    if(val_sentencia_else.getTipo().Equals(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.detener)) && val_sentencia_else.getIdentificador().equals("33-12")) //ERROR
+                    val_sentencia_else = this.lista_sentencias_else[x].ejecutar(entorno_actual,salida);
+                    //console.log(val_sentencia_else);
+                    if(val_sentencia_else.getRol() == tipo_rol.error) //ERROR
                     {
                         Tabla_Simbolos.getInstance().getStack().pop();
                         _return = val_sentencia_else;
                         return _return;
                     }
-                    else if (val_sentencia_else.getTipo().Equals(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.detener)) && val_sentencia_else.getIdentificador().equals("10-4")) //BREAK
+                    else if (val_sentencia_else.getRol() == tipo_rol.detener) //BREAK
                     {
                         Tabla_Simbolos.getInstance().getStack().pop();
                         _return = val_sentencia_else;
                         return _return;
                     }
-                    else if (val_sentencia_else.getTipo().Equals(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.continuar)) && val_sentencia_else.getIdentificador().equals("10-4")) //CONTINUE
+                    else if (val_sentencia_else.getRol() == tipo_rol.continuar) //CONTINUE
                     {
                         Tabla_Simbolos.getInstance().getStack().pop();
                         _return = val_sentencia_else;
                         return _return;
                     }
-                    else if (val_sentencia_else.getTipo().Equals(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.retornar)) && !val_sentencia_else.getIdentificador().equals("33-12")) //RETURN
+                    else if (val_sentencia_else.getRol() == tipo_rol.retornar) //RETURN
                     {
                         Tabla_Simbolos.getInstance().getStack().pop();
                         _return = val_sentencia_else;
@@ -188,10 +189,7 @@ class Sentencia_If extends Instruction
                     }
                     else
                     {                        
-                        _return = new Simbolo(new Tipo(Tabla_Enums.tipo_primitivo_Simbolo.nulo),"10-4");
-                        _return.setFila(this.fila);
-                        _return.setColumna(this.columna);
-                        _return.setFirstValor("Sentencia ELSE verdadera");                                            
+                        _return = val_sentencia_else;                                            
                     }
                 }       
                 
@@ -200,7 +198,7 @@ class Sentencia_If extends Instruction
                 _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
                 _return.setFila(this.fila);
                 _return.setColumna(this.columna);
-                _return.setValor("Sentencia If Ejecutada correctamente");  
+                _return.setValor("Sentencia IF Ejecutada correctamente");  
                 return _return;
             }
         }
@@ -238,3 +236,5 @@ class Sentencia_If extends Instruction
         return new Sentencia_If(this.fila,this.columna,this.sentencia_comparacion.getThis(),clon_lista_sentencias_if,clon_lista_else_if,clon_lista_sentencias_else);
     }
 }
+
+export default Sentencia_If;

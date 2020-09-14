@@ -30,10 +30,12 @@ import Sentencia_Asignacion from './Sentencia_Asignacion';
 import Sentencia_Break from './Sentencia_Break';
 import Sentencia_Continue from './Sentencia_Continue';
 import Sentencia_Return from './Sentencia_Return';
-import { sortAndDeduplicateDiagnostics } from 'typescript';
 import Funcion_Matriosh from './Funcion_Matriosh';
 import Tabla_Errores from './Tabla_Errores';
-import { Errores } from '../Interfaces/errores';
+import Sentencia_If from './Sentencia_If';
+import Sentencia_While from './Sentencia_While';
+import Sentencia_Do_While from './Sentencia_Do_While';
+import Sentencia_For from './Sentencia_For';
 
 class AST
 {
@@ -189,7 +191,7 @@ class AST
     public recorridof()
     {
         var _result : Simbolo;
-
+        //console.log(this.lista_instrucciones);
         for(var f = 0; f < this.lista_instrucciones.length; f++)
         {
             if(!(this.lista_instrucciones[f] instanceof Sentencia_Declaracion) && !(this.lista_instrucciones[f] instanceof Funcion_Matriosh) && !(this.lista_instrucciones[f] instanceof Sentencia_Declaracion))
@@ -253,7 +255,75 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_if')
         {
-            return new Sentencia_Asignacion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['tipo'],instruccion_jason['acceso0'],instruccion_jason['acceso1'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso1']),this.fabrica_expresiones(instruccion_jason['valor']));
+            var lista_sentencias_if : Array<Instruction>;
+            var lista_sentencias_else_if : Array<Instruction>;
+            var lista_sentencias_else : Array<Instruction>;
+
+            lista_sentencias_if = new Array<Tipo_Acceso>();
+            lista_sentencias_else_if = new Array<Tipo_Acceso>();
+            lista_sentencias_else = new Array<Tipo_Acceso>();
+
+            for(var x = 0; x < instruccion_jason['sentencias1'].length; x++)
+            {
+                lista_sentencias_if.push(this.fabrica_instrucciones(instruccion_jason['sentencias1'][x]));
+            }
+            
+            if(instruccion_jason['lista_else_if'] != null)
+            {
+                for(var y = 0; y < instruccion_jason['lista_else_if'].length; y++)
+                {
+                    lista_sentencias_else_if.push(this.fabrica_instrucciones(instruccion_jason['lista_else_if'][y]));
+                }
+            }
+
+            if(instruccion_jason['sentencias2'] != null)
+            {
+                for(var z = 0; z < instruccion_jason['sentencias2'].length; z++)
+                {
+                    lista_sentencias_else.push(this.fabrica_instrucciones(instruccion_jason['sentencias2'][z]));
+                }
+            }
+
+            return new Sentencia_If(instruccion_jason['linea'],instruccion_jason['columna'],this.fabrica_expresiones(instruccion_jason['condicion']),lista_sentencias_if,lista_sentencias_else_if,lista_sentencias_else);
+        }
+        else if(instruccion_jason['etiqueta'] == 'sentencia_while')
+        {
+            var lista_sentencias : Array<Instruction>;
+
+            lista_sentencias = new Array<Tipo_Acceso>();
+
+            for(var x = 0; x < instruccion_jason['sentencias'].length; x++)
+            {
+                lista_sentencias.push(this.fabrica_instrucciones(instruccion_jason['sentencias'][x]));
+            }
+
+            return new Sentencia_While(instruccion_jason['linea'],instruccion_jason['columna'],this.fabrica_expresiones(instruccion_jason['condicion']),lista_sentencias);
+        }
+        else if(instruccion_jason['etiqueta'] == 'sentencia_do_while')
+        {
+            var lista_sentencias : Array<Instruction>;
+
+            lista_sentencias = new Array<Tipo_Acceso>();
+
+            for(var x = 0; x < instruccion_jason['sentencias'].length; x++)
+            {
+                lista_sentencias.push(this.fabrica_instrucciones(instruccion_jason['sentencias'][x]));
+            }
+
+            return new Sentencia_Do_While(instruccion_jason['linea'],instruccion_jason['columna'],this.fabrica_expresiones(instruccion_jason['condicion']),lista_sentencias);
+        }
+        else if(instruccion_jason['etiqueta'] == 'sentencia_for')
+        {
+            var lista_sentencias : Array<Instruction>;
+
+            lista_sentencias = new Array<Tipo_Acceso>();
+
+            for(var x = 0; x < instruccion_jason['lista_sentencias'].length; x++)
+            {
+                lista_sentencias.push(this.fabrica_instrucciones(instruccion_jason['lista_sentencias'][x]));
+            }
+            
+            return new Sentencia_For(instruccion_jason['linea'],instruccion_jason['columna'],this.fabrica_instrucciones(instruccion_jason['sentencia1']), this.fabrica_expresiones(instruccion_jason['sentencia2']), this.fabrica_expresiones(instruccion_jason['sentencia3']),lista_sentencias);
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_acceso')
         {

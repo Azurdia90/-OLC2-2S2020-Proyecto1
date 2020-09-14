@@ -92,7 +92,7 @@ class Sentencia_Declaracion extends Instruction
             simbolo_aceptado.setValor("Declaración Succesful");
             simbolo_aceptado.setFila(this.fila);
             simbolo_aceptado.setColumna(this.columna);
-            return nuevo_simbolo;
+            return simbolo_aceptado;
         }
         catch(Exception)
         {
