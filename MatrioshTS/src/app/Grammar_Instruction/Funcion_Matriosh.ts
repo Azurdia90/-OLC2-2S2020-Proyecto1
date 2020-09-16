@@ -6,13 +6,23 @@ import Sentencia_Declaracion from './Sentencia_Declaracion';
 import Tipo from './Tipo';
 import Tabla_Simbolos from './Tabla_Simbolos';
 
-class Funcion_Matriosh extends Funcion
+class Funcion_MatrioshTS extends Funcion
 {
     constructor(p_fila : number, p_columna : number, p_id : String, p_lista_parametros? : Array<Instruction>, p_lista_sentencias? : Array<Instruction>)
     {
         super(p_fila, p_columna, p_id, p_lista_parametros, p_lista_sentencias);
     }
     
+    public getFila()
+    {
+        return this.fila;
+    }
+
+    public getColumna()
+    {
+        return this.columna;
+    }
+
     public pasarParametros(lista_parametros_enviados : Array<Simbolo>, salida : Middle)
     {
         let _return : Simbolo;
@@ -159,8 +169,8 @@ class Funcion_Matriosh extends Funcion
             clon_lista_sentencias.push(this.lista_sentencias[y].getThis());
         }
         
-        return new Funcion_Matriosh(this.fila,this.columna,this.identificador,clon_lista_parametros,clon_lista_sentencias);
+        return new Funcion_MatrioshTS(this.fila,this.columna,this.identificador,clon_lista_parametros,clon_lista_sentencias);
     }
 }
 
-export default Funcion_Matriosh;
+export default Funcion_MatrioshTS;

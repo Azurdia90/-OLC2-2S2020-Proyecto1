@@ -7,7 +7,7 @@ class Sentencia_Continue extends Instruction
 {
     constructor(p_fila : number, p_columna : number)
     {
-        super(p_fila.valueOf(),p_columna.valueOf());
+        super(p_fila,p_columna);
     }
 
     public ejecutar(entorno_padre : Map<String,Simbolo>, salida : Middle)

@@ -1,5 +1,6 @@
 import Instruction from "./Instruction";
 import Middle from './Middle';
+import Sentencia_Caso from './Sentencia_Caso';
 import Simbolo from './Simbolo';
 import Tabla_Simbolos from './Tabla_Simbolos';
 import Tipo from './Tipo';
@@ -21,7 +22,7 @@ class Sentencia_Switch extends Instruction
     {
         let _return : Simbolo;
         let tmp_val : Simbolo;
-
+        console.log(Tabla_Simbolos.getInstance().getStack());
         try
         {
             tmp_val = (this.valor_condicion == null) ? null : this.valor_condicion.ejecutar(entorno_padre,salida);
@@ -40,73 +41,55 @@ class Sentencia_Switch extends Instruction
                 return tmp_val;
             }
 
-            if(tmp_val.getTipo().getTipo() != tipo_dato.BOOLEANO)
+            if(tmp_val.getTipo().getTipo() == tipo_dato.IDENTIFICADOR)
             {
-                _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
+                _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "10-4");
                 _return.setFila(this.fila);
                 _return.setColumna(this.columna);
-                _return.setValor("No es posible realizar Sentencia While, expresión no da como resultado un valor booleano.");
+                _return.setValor("No es posible realizar Sentencia Switch con un valor no Primitivo.");
                 return _return;
             }
-            
-            while(<Boolean>(tmp_val.getValor()))
-            {
-                let entorno_actual: Map<String, Simbolo> = new Map<String, Simbolo>();
-                Tabla_Simbolos.getInstance().getStack()._push(this.fila,this.columna,entorno_actual);
 
-                var val_sentencia: Simbolo;
-                
-                for(var x = 0; x <  this.lista_sentencias.length; x++)
-                {                    
-                    val_sentencia = this.lista_sentencias[x].ejecutar(entorno_actual,salida);
+            var tmp_caso: Sentencia_Caso;
+            var val_caso: Simbolo;
+            console.log(tmp_val);
+            for(var x = 0; x <  this.lista_casos.length; x++)
+            {           
+                tmp_caso = <Sentencia_Caso> this.lista_casos[x]; 
+                tmp_caso.setValorPadre(tmp_val);        
+                val_caso = tmp_caso.ejecutar(entorno_padre,salida);
 
-                    if (val_sentencia.getRol() == tipo_rol.error)
-                    {                        
-                        _return = val_sentencia;
-                        Tabla_Simbolos.getInstance().getStack().pop();
-                        return _return;
-                    }
-                    else if (val_sentencia.getRol() == tipo_rol.detener)
-                    {     
-                        _return = val_sentencia;                    
-                        break;
-                    }
-                    else if (val_sentencia.getRol() == tipo_rol.continuar)
-                    {   
-                        _return = val_sentencia;                     
-                        break;
-                    }
-                    else if (val_sentencia.getRol() == tipo_rol.retornar)
-                    {
-                        _return = val_sentencia;
-                        Tabla_Simbolos.getInstance().getStack().pop();                        
-                        return _return;
-                    }
-                    else
-                    {     
-                        _return = val_sentencia;
-                        continue;
-                    }       
-                }  
-
-                Tabla_Simbolos.getInstance().getStack().pop();
-
-                if(_return.getRol() == tipo_rol.detener)
-                {
-                    _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
-                    _return.setFila(this.fila);
-                    _return.setColumna(this.columna);
-                    _return.setValor("Sentencia While Ejecutada correctamente");  
+                if (val_caso.getRol() == tipo_rol.error)
+                {                        
+                    _return = val_caso;
                     return _return;
-                }                 
-
-                tmp_val = (this.sentencia_comparacion == null) ? null : this.sentencia_comparacion.ejecutar(entorno_padre,salida);            
-            }            
-                       
+                }
+                else if (val_caso.getRol() == tipo_rol.detener)
+                {     
+                    _return = val_caso;                    
+                    break;
+                }
+                else if (val_caso.getRol() == tipo_rol.continuar)
+                {   
+                    _return = val_caso;                     
+                    continue;
+                }
+                else if (val_caso.getRol() == tipo_rol.retornar)
+                {
+                    _return = val_caso;                      
+                    return _return;
+                }
+                else
+                {     
+                    _return = val_caso;
+                    continue;
+                }       
+            }               
+      
             _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
             _return.setFila(this.fila);
             _return.setColumna(this.columna);
-            _return.setValor("Sentencia While Ejecutada correctamente");  
+            _return.setValor("Sentencia Swtich Ejecutada correctamente");  
             return _return;
         }
         catch(Exception)
@@ -114,21 +97,21 @@ class Sentencia_Switch extends Instruction
             _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
             _return.setFila(this.fila);
             _return.setColumna(this.columna);
-            _return.setValor("Error Sentencia While: " + Exception.Message);
+            _return.setValor("Error Sentencia Switch: " + Exception.Message);
             return _return;
         }
     }
 
     public getThis() 
     {
-        var clon_lista_sentencias: Array<Instruction> = new Array<Instruction>();
+        var clon_lista_casos: Array<Instruction> = new Array<Instruction>();
         
-        for(var x = 0; x < this.lista_sentencias.length; x++)
+        for(var x = 0; x < this.lista_casos.length; x++)
         {
-            clon_lista_sentencias.push(this.lista_sentencias[x].getThis());
+            clon_lista_casos.push(this.lista_casos[x].getThis());
         }
         
-        return new Sentencia_Switch(this.fila,this.columna,this.sentencia_comparacion.getThis(),clon_lista_sentencias);
+        return new Sentencia_Switch(this.fila,this.columna,this.valor_condicion.getThis(),clon_lista_casos);
     }
 }
 

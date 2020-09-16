@@ -21,6 +21,7 @@
 "let"                 return 'r_let'
 "const"               return 'r_const'
 
+"type"                return 'r_type'
 "function"            return 'r_function'
 
 "if"                  return 'r_if'
@@ -116,33 +117,27 @@ BODY_MATRIOSHTS
     ;
 
 LISTA_CONTENIDO
-    :  /*IMPORT LISTA_SENTENCIAS
+    :  LISTA_CONTENIDO TYPES 
       {
-        $1 = [$1];
-        for(var i = 0; i < $2.length; i++)
-        {
-            $1.push($2[i]);
-        }
-        $$ = $1;
-      }
-    | */LISTA_SENTENCIAS
-      {
-          $$ = $1;
-      } 
-    ;
-
-
- /*************************SENTENCIAS***********************/
-
-LISTA_SENTENCIAS
-    : LISTA_SENTENCIAS SENTENCIA
-      { 
         $1.push($2);
         $$ = $1;
       }
+    | LISTA_CONTENIDO SENTENCIA 
+      {
+        $1.push($2);
+        $$ = $1;
+      }
+    | TYPES
+      {
+        $$ = [$1];
+      }     
     | SENTENCIA
-      {$$ = [$1];}
+      {
+        $$ = [$1];
+      } 
     ;
+
+ /*************************SENTENCIAS***********************/
 
 SENTENCIA
     : SENTENCIA_DECLARACION s_dot_coma
@@ -374,7 +369,7 @@ DEFECTO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'sentencia_caso', linea: linea, columna: columna, default: false, condicion : null, lista_sentencias: $3};
+        $$ = {etiqueta: 'sentencia_caso', linea: linea, columna: columna, default: true, condicion : null, lista_sentencias: $3};
       }
     ;
 
@@ -459,6 +454,104 @@ SENTENCIA_RETURN
       }
     ;
 
+/***************************************************************************LISTAS DE PRODUCCIONES TYPES*********************************************************************************************************/
+
+TYPES
+  : r_type identificador s_asign s_key_open LISTA_ATRIBUTOS s_key_close s_dot_coma
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'type', linea: linea, columna: columna, identificador: $2, lista_atributos: $5};
+    }
+  ;
+
+LISTA_ATRIBUTOS
+  : LISTA_ATRIBUTOS s_coma ATRIBUTO
+    {
+      $1.push($2);
+      $$ = $1;
+    }
+  | ATRIBUTO
+    {
+      $$ = [$1];
+    }
+  ;
+
+ATRIBUTO
+  : identificador s_doble_dot TIPO
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'atributo', linea: linea, columna: columna, valor: $1, tipo: $3};
+    }
+  ;
+
+/***************************************************************************LISTAS DE PRODUCCIONES FUNCIONES***********************************************************************************************************/
+
+FUNCION
+    : r_function identificador s_par_open LISTA_PARAMETROS s_par_close s_doble_dot TIPO s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        var lista_tipos = [];
+        var lista_parametros = [];
+        for(var i = 0;  i < $4.length; i++)
+        {
+          lista_tipos.push($4[i]["tipo"]);
+          lista_parametros.push($4[i]["identificador"]);
+        }
+        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$7);      
+      }
+    | r_function identificador s_par_open s_par_close s_key_open s_doble_dot TIPO LISTA_SENTENCIAS_METODOS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        var lista_tipos = [];
+        var lista_parametros = [];
+        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$6);
+      } 
+    | r_function identificador s_par_open LISTA_PARAMETROS s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        var lista_tipos = [];
+        var lista_parametros = [];
+        for(var i = 0;  i < $4.length; i++)
+        {
+          lista_tipos.push($4[i]["tipo"]);
+          lista_parametros.push($4[i]["identificador"]);
+        }
+        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$7);      
+      }
+    | r_function identificador s_par_open s_par_close s_key_open LISTA_SENTENCIAS_METODOS s_key_close
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        var lista_tipos = [];
+        var lista_parametros = [];
+        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$6);
+      } 
+    ;
+
+LISTA_PARAMETROS
+    : LISTA_PARAMETROS s_coma DECLARACION_PARAMETRO
+      {
+        $1.push($3);
+        $$ = $1;
+      }
+    | DECLARACION_PARAMETRO
+      {
+        $$ = [$1];
+      }
+    ;
+
+DECLARACION_PARAMETRO
+    : TIPO_VALOR identificador
+      {
+        $$ = {etiqueta: "parametro", tipo: $1, identificador: $2};
+      }
+    ;
+
 /***************************************************************************LISTAS DE PRODUCCIONES EXPRESIONES*********************************************************************************************************/
 LISTA_EXPRESIONES 
     : LISTA_EXPRESIONES s_coma EXPRESION
@@ -485,6 +578,8 @@ EXPRESION
       {$$ = $1;}  
     | OPERADOR_DECREMENTO  
       {$$ = $1;}     
+    | OPERADOR_TERNARIO  
+      {$$ = $1;}   
     | s_par_open EXPRESION s_par_close
       {$$ = $2;}  
     | SENTENCIA_ACCESO
@@ -613,6 +708,15 @@ OPERADOR_DECREMENTO
       }
     ; 
 
+OPERADOR_TERNARIO 
+    : EXPRESION s_ternario EXPRESION s_doble_dot EXPRESION
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: "operador_ternario", linea: linea, columna: columna, condicion: $1 , expresion1: $3, expresion2: $5};
+    }
+    ;
+
 SENTENCIA_ACCESO  
   : identificador LISTA_ACCESOS
     {
@@ -702,3 +806,4 @@ DATO_PRIMITIVO
         $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: yytext};
       }
     ;
+
