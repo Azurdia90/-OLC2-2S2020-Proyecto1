@@ -8,7 +8,7 @@ import Tabla_Simbolos from './Tabla_Simbolos';
 
 class Funcion_MatrioshTS extends Funcion
 {
-    constructor(p_fila : number, p_columna : number, p_id : String, p_lista_parametros? : Array<Instruction>, p_lista_sentencias? : Array<Instruction>)
+    constructor(p_fila : number, p_columna : number, p_id : String, p_lista_parametros : Array<Instruction>, p_lista_sentencias : Array<Instruction>, p_tipo? : Tipo)
     {
         super(p_fila, p_columna, p_id, p_lista_parametros, p_lista_sentencias);
     }
@@ -96,8 +96,8 @@ class Funcion_MatrioshTS extends Funcion
                     this.entorno_local = new Map<String,Simbolo>();
 
                     _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                    _return.setFila(this.fila);
-                    _return.setColumna(this.columna);
+                    _return.setFila(_tmp_return.getFila());
+                    _return.setColumna(_tmp_return.getColumna());
                     _return.setValor("Error en Funcion: No se permite el uso de sentencia break");
                     return _return;                    
                 }
@@ -107,8 +107,8 @@ class Funcion_MatrioshTS extends Funcion
                     this.entorno_local = new Map<String,Simbolo>();
 
                     _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                    _return.setFila(this.fila);
-                    _return.setColumna(this.columna);
+                    _return.setFila(_tmp_return.getFila());
+                    _return.setColumna(_tmp_return.getColumna());
                     _return.setValor("Error en Funcion: No se permite el uso de sentencia continue");
                     return _return;   
                 }
@@ -126,17 +126,12 @@ class Funcion_MatrioshTS extends Funcion
                     _return.setFila(this.fila);
                     _return.setColumna(this.columna);
                     _return.setValor("null");   
-                    return _return;
                 }                
             }
             
             Tabla_Simbolos.getInstance().getStack().pop();
             this.entorno_local = new Map<String,Simbolo>();
-            
-            _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.NULO), "");
-            _return.setFila(this.fila);
-            _return.setColumna(this.columna);
-            _return.setValor("null");   
+          
             return _return;
         }
         catch(Exception)
@@ -153,12 +148,7 @@ class Funcion_MatrioshTS extends Funcion
     {
         var clon_lista_parametros : Array<Instruction>  = new Array<Instruction>();
         var clon_lista_sentencias : Array<Instruction>  = new Array<Instruction>();
-        
-        /*if(identificador.equalsIgnoreCase("agregarNotas"))
-        {
-            System.out.println("Ejecutando la función: " + identificador);
-        }*/
-        
+
         for(var x = 0; x < this.lista_parametros.length; x++)
         {
             clon_lista_parametros.push(this.lista_parametros[x].getThis());

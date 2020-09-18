@@ -67,7 +67,7 @@ class Tabla_Simbolos
         {
             let funcion_actual : Funcion = this.lista_funciones[x];
             if(funcion_actual.getIdentificador() == p_identificador)
-            {
+            {   //console.log(funcion_actual.getThis());
                 return funcion_actual.getThis();
             }
         }

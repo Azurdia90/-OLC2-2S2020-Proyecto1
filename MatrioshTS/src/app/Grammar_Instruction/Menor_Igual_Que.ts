@@ -12,7 +12,7 @@ class Menor_Igual_Que extends Expresion
         /*nulo*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,                         tipo_operacion_resultado.error,                         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
         /*booleano*/      [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,                         tipo_operacion_resultado.error,                         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
         /*numero*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.menorigualque_numerico,        tipo_operacion_resultado.menorigualque_cadena_numerico, tipo_operacion_resultado.error, tipo_operacion_resultado.error],
-        /*String*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.menorigualque_cadena_numerico, tipo_operacion_resultado.mayorque_cadena,               tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*String*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.menorigualque_cadena_numerico, tipo_operacion_resultado.menorigualque_cadena,               tipo_operacion_resultado.error, tipo_operacion_resultado.error],
         /*identificador*/ [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,                         tipo_operacion_resultado.error,                         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
         /*error*/         [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,                          tipo_operacion_resultado.error,                        tipo_operacion_resultado.error, tipo_operacion_resultado.error],
     ];
@@ -63,9 +63,9 @@ class Menor_Igual_Que extends Expresion
                 case tipo_operacion_resultado.menorigualque_cadena_numerico:
                     var numero = 0;
 
-                    for(var i : number = 0; i < op1.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op1.getValor().toString().length; i++)
                     {
-                        numero = numero + Number(op1.getValor().toString().charAt(i));
+                        numero = numero + Number(op1.getValor().toString().charCodeAt(i));
                     }
 
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
@@ -74,9 +74,9 @@ class Menor_Igual_Que extends Expresion
                 case tipo_operacion_resultado.menorigualque_numerico_cadena:
                     var numero = 0;
 
-                    for(var i : number = 0; i < op2.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op2.getValor().toString().length; i++)
                     {
-                        numero = numero + Number(op2.getValor().toString().charAt(i));
+                        numero = numero + Number(op2.getValor().toString().charCodeAt(i));
                     }
                     
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
@@ -85,16 +85,16 @@ class Menor_Igual_Que extends Expresion
                 case tipo_operacion_resultado.menorigualque_cadena:
                     var numero1 = 0;
 
-                    for(var i : number = 0; i < op1.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op1.getValor().toString().length; i++)
                     {
-                        numero = numero + Number(op1.getValor().toString().charAt(i));
+                        numero1 = numero1 + Number(op1.getValor().toString().charCodeAt(i));
                     }
 
                     var numero2 = 0;
 
-                    for(var i : number = 0; i < op2.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op2.getValor().toString().length; i++)
                     {
-                        numero2 = numero2 + Number(op2.getValor().toString().charAt(i));
+                        numero2 = numero2 + Number(op2.getValor().toString().charCodeAt(i));
                     }
 
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");

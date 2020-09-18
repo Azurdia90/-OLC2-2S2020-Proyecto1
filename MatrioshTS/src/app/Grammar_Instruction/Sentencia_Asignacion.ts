@@ -90,8 +90,8 @@ class Sentencia_Asignacion extends Instruction
     }
 
     public getThis() 
-    {
-        return new Sentencia_Asignacion(this.fila,this.columna,this.tipo,this.acceso0, this.acceso1.getThis(), this.valor.getThis());
+    {   
+        return new Sentencia_Asignacion(this.fila,this.columna,this.tipo,this.acceso0, this.acceso1 == undefined ? undefined : this.acceso1.getThis(), this.valor == undefined ? undefined : this.valor.getThis());
     }
 }
 

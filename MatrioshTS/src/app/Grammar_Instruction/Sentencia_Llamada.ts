@@ -32,22 +32,17 @@ class Sentencia_Llamada extends Instruction
         let _return : Simbolo;
 
         try
-        {
-            /*if(identificador.equalsIgnoreCase("agregarNotas"))
-            {
-                System.out.println("Lamando a la función: " + identificador);
-            }*/
-
+        {   
             if(this.global)
             {
-                funcion_actual = Tabla_Simbolos.getInstance().getFuncion(this.identificador);
+                funcion_actual = Tabla_Simbolos.getInstance().getFuncion(this.identificador);   
             }
             else
             {
                 funcion_actual = this.padre.getFuncion(this.identificador);
                 this.global = true;
             }
-                       
+                      
             if(funcion_actual == null)
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");

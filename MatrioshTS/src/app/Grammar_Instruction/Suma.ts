@@ -8,13 +8,13 @@ class Suma extends Expresion
 {
     protected matriz_operacion_suma : tipo_operacion_resultado[][] = 
     [   /*                                      void                            nulo                           booleano                                numero                                 cadena                       identificador                          error 
-        /*void*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
-        /*nulo*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
-        /*booleano*/      [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
-        /*numero*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.suma_numero,   tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.error, tipo_operacion_resultado.error],
-        /*String*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
-        /*identificador*/ [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
-        /*error*/         [ tipo_operacion_resultado.error, tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*void*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*nulo*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*booleano*/      [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*numero*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.suma_numero,   tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*String*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.concatenacion, tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*identificador*/ [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
+        /*error*/         [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error,         tipo_operacion_resultado.error, tipo_operacion_resultado.error],
     ];
 
     constructor(p_fila : number, p_columna : number, p_operador_izq : Instruction, p_operador_der : Instruction)
@@ -62,7 +62,7 @@ class Suma extends Expresion
                     return _return;
 
                 case tipo_operacion_resultado.concatenacion:
-                    _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.NUMERO), "");
+                    _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.CADENA), "");
                     _return.setValor(op1.getValor().toString().concat(op2.getValor().toString()));
                     return _return;
                 default:

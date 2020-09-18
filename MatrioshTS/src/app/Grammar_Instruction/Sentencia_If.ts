@@ -219,7 +219,7 @@ class Sentencia_If extends Instruction
         var clon_lista_sentencias_else: Array<Instruction> = new Array<Instruction>();
         
         for(var x = 0; x < this.lista_sentencias_if.length; x++)
-        {
+        {   
             clon_lista_sentencias_if.push(this.lista_sentencias_if[x].getThis());
         }
     
@@ -232,7 +232,7 @@ class Sentencia_If extends Instruction
         {
             clon_lista_sentencias_else.push(this.lista_sentencias_else[z].getThis());
         }
-        
+       
         return new Sentencia_If(this.fila,this.columna,this.sentencia_comparacion.getThis(),clon_lista_sentencias_if,clon_lista_else_if,clon_lista_sentencias_else);
     }
 }

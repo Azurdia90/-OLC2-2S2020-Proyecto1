@@ -63,9 +63,9 @@ class Mayor_Igual_Que extends Expresion
                 case tipo_operacion_resultado.mayorigualque_cadena_numerico:
                     var numero = 0;
 
-                    for(var i : number = 0; i < op1.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op1.getValor().toString().length; i++)
                     {
-                        numero = numero + Number(op1.getValor().toString().charAt(i));
+                        numero = numero + Number(op1.getValor().toString().charCodeAt(i));
                     }
 
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
@@ -74,9 +74,9 @@ class Mayor_Igual_Que extends Expresion
                 case tipo_operacion_resultado.mayorigualque_numerico_cadena:
                     var numero = 0;
 
-                    for(var i : number = 0; i < op2.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op2.getValor().toString().length; i++)
                     {
-                        numero = numero + Number(op2.getValor().toString().charAt(i));
+                        numero = numero + Number(op2.getValor().toString().charCodeAt(i));
                     }
                     
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
@@ -85,16 +85,16 @@ class Mayor_Igual_Que extends Expresion
                 case tipo_operacion_resultado.mayorigualque_cadena:
                     var numero1 = 0;
 
-                    for(var i : number = 0; i < op1.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op1.getValor().toString().length; i++)
                     {
-                        numero = numero + Number(op1.getValor().toString().charAt(i));
+                        numero1 = numero1 + Number(op1.getValor().toString().charCodeAt(i));
                     }
 
                     var numero2 = 0;
 
-                    for(var i : number = 0; i < op2.getValor.toString().length; i++)
+                    for(var i : number = 0; i < op2.getValor().toString().length; i++)
                     {
-                        numero2 = numero2 + Number(op2.getValor().toString().charAt(i));
+                        numero2 = numero2 + Number(op2.getValor().toString().charCodeAt(i));
                     }
 
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");

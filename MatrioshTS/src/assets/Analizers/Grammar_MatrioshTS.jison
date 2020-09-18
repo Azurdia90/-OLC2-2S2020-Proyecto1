@@ -2,8 +2,6 @@
 
 /* lexical grammar */
 %lex
-%x estado_caracter
-%x estado_cadena
 %%
 
 \s+                   /* skip whitespace */
@@ -122,6 +120,11 @@ LISTA_CONTENIDO
         $1.push($2);
         $$ = $1;
       }
+    | LISTA_CONTENIDO FUNCION
+      {
+        $1.push($2);
+        $$ = $1;
+      }
     | LISTA_CONTENIDO SENTENCIA 
       {
         $1.push($2);
@@ -131,13 +134,29 @@ LISTA_CONTENIDO
       {
         $$ = [$1];
       }     
+    | FUNCION
+      {
+        $$ = [$1];
+      }  
     | SENTENCIA
       {
         $$ = [$1];
       } 
     ;
 
- /*************************SENTENCIAS***********************/
+ /********************************************SENTENCIAS******************************************/
+
+LISTA_SENTENCIAS
+    : LISTA_SENTENCIAS SENTENCIA 
+      {
+        $1.push($2);
+        $$ = $1;
+      }
+    | SENTENCIA
+      {
+        $$ = [$1];
+      }   
+    ;
 
 SENTENCIA
     : SENTENCIA_DECLARACION s_dot_coma
@@ -242,7 +261,6 @@ SENTENCIA_DECLARACION
         var linea = yylineno;
         var columna = yyleng;
         $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $2, tipo: null, valor: $4};
-        $$.setValor($4);
       }
     | r_let LISTA_IDENTIFICADORES
       {
@@ -493,43 +511,29 @@ FUNCION
       {
         var linea = yylineno;
         var columna = yyleng;
-        var lista_tipos = [];
-        var lista_parametros = [];
-        for(var i = 0;  i < $4.length; i++)
-        {
-          lista_tipos.push($4[i]["tipo"]);
-          lista_parametros.push($4[i]["identificador"]);
-        }
-        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$7);      
+
+        $$ = {etiqueta: 'funcion', linea: linea, columna: columna, identificador: $2, tipo: $7, lista_parametros: $4, lista_sentencias: $9};   
       }
-    | r_function identificador s_par_open s_par_close s_key_open s_doble_dot TIPO LISTA_SENTENCIAS_METODOS s_key_close
+    | r_function identificador s_par_open s_par_close s_doble_dot TIPO s_key_open LISTA_SENTENCIAS s_key_close
       {
         var linea = yylineno;
         var columna = yyleng;
-        var lista_tipos = [];
-        var lista_parametros = [];
-        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$6);
+
+        $$ = {etiqueta: 'funcion', linea: linea, columna: columna, identificador: $2, tipo: $6, lista_parametros: null, lista_sentencias: $8};
       } 
     | r_function identificador s_par_open LISTA_PARAMETROS s_par_close s_key_open LISTA_SENTENCIAS s_key_close
       {
         var linea = yylineno;
         var columna = yyleng;
-        var lista_tipos = [];
-        var lista_parametros = [];
-        for(var i = 0;  i < $4.length; i++)
-        {
-          lista_tipos.push($4[i]["tipo"]);
-          lista_parametros.push($4[i]["identificador"]);
-        }
-        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$7);      
+
+        $$ = {etiqueta: 'funcion', linea: linea, columna: columna, identificador: $2, tipo: null, lista_parametros: $4, lista_sentencias: $7};       
       }
-    | r_function identificador s_par_open s_par_close s_key_open LISTA_SENTENCIAS_METODOS s_key_close
+    | r_function identificador s_par_open s_par_close s_key_open LISTA_SENTENCIAS s_key_close
       {
         var linea = yylineno;
         var columna = yyleng;
-        var lista_tipos = [];
-        var lista_parametros = [];
-        $$ = new Funcion(linea,columna,$1,$2,lista_tipos,lista_parametros,$6);
+
+        $$ = {etiqueta: 'funcion', linea: linea, columna: columna, identificador: $2, tipo: null, lista_parametros: null, lista_sentencias: $6};
       } 
     ;
 
@@ -546,9 +550,12 @@ LISTA_PARAMETROS
     ;
 
 DECLARACION_PARAMETRO
-    : TIPO_VALOR identificador
+    :  identificador s_doble_dot TIPO
       {
-        $$ = {etiqueta: "parametro", tipo: $1, identificador: $2};
+        var linea = yylineno;
+        var columna = yyleng;
+
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $1, tipo: $3, valor: null};
       }
     ;
 

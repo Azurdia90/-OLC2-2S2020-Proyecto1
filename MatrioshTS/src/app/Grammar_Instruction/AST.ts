@@ -40,6 +40,7 @@ import Sentencia_Switch from './Sentencia_Switch';
 import Sentencia_Caso from './Sentencia_Caso';
 import Operador_Ternario from './Operador_Ternario';
 import Type_MatrioshTS from './Type_MatrioshTS';
+import Funcion_MatrioshTS from './Funcion_Matriosh';
 
 class AST
 {
@@ -167,7 +168,7 @@ class AST
             }
             else
             {
-                // console.log(_result);
+                continue;
             }
         }
     }
@@ -209,20 +210,43 @@ class AST
             }
             else
             {
-                // console.log(_result);
+                continue;
             }
         }
     }  
 
     private fabrica_instrucciones(instruccion_jason : JSON)
     {
-        if(instruccion_jason['etiqueta'] == 'type')
+        if(instruccion_jason['etiqueta'] == 'funcion')
+        {
+            let lista_parametros : Array<Instruction>;
+            let lista_sentencias : Array<Instruction>;
+
+            lista_parametros = new Array<Instruction>();
+            lista_sentencias = new Array<Instruction>();
+            
+            if(instruccion_jason['lista_parametros'] != null)
+            {
+                for(var x = 0; x < instruccion_jason['lista_parametros'].length; x++)
+                {
+                    lista_parametros.push(this.fabrica_instrucciones(instruccion_jason['lista_parametros'][x]));
+                }
+            }
+
+            for(var y = 0; y < instruccion_jason['lista_sentencias'].length; y++)
+            {
+                lista_sentencias.push(this.fabrica_instrucciones(instruccion_jason['lista_sentencias'][y]));
+            }       
+            
+            return new Funcion_MatrioshTS(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['identificador'],lista_parametros, lista_sentencias, instruccion_jason['tipo'] == null ? undefined : this.fabrica_tipo(instruccion_jason['tipo']));
+        }
+        else if(instruccion_jason['etiqueta'] == 'type')
         {
             return new Type_MatrioshTS(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['identificador'],instruccion_jason['lista_atributos']);
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_declaracion')
         {
-            return new Sentencia_Declaracion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['constante'],instruccion_jason['identificador'],this.fabrica_expresiones(instruccion_jason['valor']),this.fabrica_tipo(instruccion_jason['tipo']));
+            return new Sentencia_Declaracion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['constante'],instruccion_jason['identificador'],instruccion_jason['valor'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['valor']),this.fabrica_tipo(instruccion_jason['tipo']));
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_asignacion')
         {
