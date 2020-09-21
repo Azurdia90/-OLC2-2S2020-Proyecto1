@@ -5,6 +5,7 @@ import Simbolo from './Simbolo';
 import Sentencia_Declaracion from './Sentencia_Declaracion';
 import Tipo from './Tipo';
 import Tabla_Simbolos from './Tabla_Simbolos';
+import Tabla_Errores from './Tabla_Errores';
 
 class Funcion_MatrioshTS extends Funcion
 {
@@ -28,10 +29,10 @@ class Funcion_MatrioshTS extends Funcion
         let _return : Simbolo;
         
         this.entorno_local = new Map<String,Simbolo>();
-        
+        //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_parametros);}
+        //if(this.identificador == "SentenciasAnidadas"){console.log(lista_parametros_enviados);}
         if(this.lista_parametros.length == lista_parametros_enviados.length)
-        {
-                    
+        {   
             for(var x = 0; x < this.lista_parametros.length; x++)
             {
                 var declaracion_actual : Sentencia_Declaracion = <Sentencia_Declaracion> this.lista_parametros[x];
@@ -42,14 +43,14 @@ class Funcion_MatrioshTS extends Funcion
                 }
 
                 var _result : Simbolo = declaracion_actual.ejecutar(this.entorno_local, salida);
-
-                if(_result.getRol() != tipo_rol.valor && _result.getRol() != tipo_rol.arreglo)
+              
+                if(_result.getRol() != tipo_rol.aceptado)
                 {
                     this.entorno_local = new Map<String,Simbolo>();
                     return _result;
                 }        
             }
-
+                      
             _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4");
             _return.setFila(this.fila);
             _return.setColumna(this.columna); 
@@ -86,31 +87,20 @@ class Funcion_MatrioshTS extends Funcion
                 if (_tmp_return.getRol() == tipo_rol.error)
                 {
                     _return = _tmp_return;
-                    Tabla_Simbolos.getInstance().getStack().pop();
-                    this.entorno_local = new Map<String,Simbolo>();
-                    return _return;                    
+                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _return.getFila() == undefined ? "0" : _return.getFila().toString(), columna: _return.getColumna() == undefined  ? "0" : _return.getColumna().toString(), identificador: this.identificador, descripcion: _return.getValor().toString()};
+                    Tabla_Errores.getInstance().push(error_encontrado);                 
                 }
                 else if (_tmp_return.getRol() == tipo_rol.detener)
                 {
-                    Tabla_Simbolos.getInstance().getStack().pop();
-                    this.entorno_local = new Map<String,Simbolo>();
-
-                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                    _return.setFila(_tmp_return.getFila());
-                    _return.setColumna(_tmp_return.getColumna());
-                    _return.setValor("Error en Funcion: No se permite el uso de sentencia break");
-                    return _return;                    
+                    _return = _tmp_return;
+                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _return.getFila() == undefined ? "0" : _return.getFila().toString(), columna: _return.getColumna() == undefined  ? "0" : _return.getColumna().toString(), identificador: this.identificador, descripcion: "Error en Funcion: No se permite el uso de sentencia Break"};
+                    Tabla_Errores.getInstance().push(error_encontrado);                 
                 }
                 else if(_tmp_return.getRol() == tipo_rol.continuar)
                 {
-                    Tabla_Simbolos.getInstance().getStack().pop();
-                    this.entorno_local = new Map<String,Simbolo>();
-
-                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                    _return.setFila(_tmp_return.getFila());
-                    _return.setColumna(_tmp_return.getColumna());
-                    _return.setValor("Error en Funcion: No se permite el uso de sentencia continue");
-                    return _return;   
+                    _return = _tmp_return;
+                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _return.getFila() == undefined ? "0" : _return.getFila().toString(), columna: _return.getColumna() == undefined  ? "0" : _return.getColumna().toString(), identificador: this.identificador, descripcion: "Error en Funcion: No se permite el uso de sentencia Continue"};
+                    Tabla_Errores.getInstance().push(error_encontrado); 
                 }
                 else if(_tmp_return.getRol() == tipo_rol.retornar) 
                 {                                                           
@@ -148,14 +138,14 @@ class Funcion_MatrioshTS extends Funcion
     {
         var clon_lista_parametros : Array<Instruction>  = new Array<Instruction>();
         var clon_lista_sentencias : Array<Instruction>  = new Array<Instruction>();
-
+        //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_parametros);}
         for(var x = 0; x < this.lista_parametros.length; x++)
-        {
+        {   //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_parametros[x].getThis());}
             clon_lista_parametros.push(this.lista_parametros[x].getThis());
         }
-        
+        //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_sentencias);}
         for(var y = 0; y < this.lista_sentencias.length; y++)
-        {
+        {   //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_sentencias[y].getThis());}
             clon_lista_sentencias.push(this.lista_sentencias[y].getThis());
         }
         

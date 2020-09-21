@@ -30,7 +30,7 @@ class Sentencia_Llamada extends Instruction
     {
         let funcion_actual : Funcion;
         let _return : Simbolo;
-
+        
         try
         {   
             if(this.global)
@@ -51,11 +51,11 @@ class Sentencia_Llamada extends Instruction
                 _return.setValor("Sentencia Llamada: Funcion " + this.identificador + " no existe.");
                 return _return;            
             }                        
-            
+             
             for(var x : number = 0; x < this.lista_parametros.length; x++)
             {
                 var tmp_val : Simbolo = this.lista_parametros[x].ejecutar(entorno_padre, salida);
-                
+
                 if (tmp_val == null)
                 {
                     _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");

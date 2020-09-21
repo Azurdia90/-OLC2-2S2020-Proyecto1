@@ -169,12 +169,16 @@ SENTENCIA
       {$$ = $1;}
       | SENTENCIA_WHILE
       {$$ = $1;}
-      | SENTENCIA_DO_WHILE
-      {$$ = $1;}
       | SENTENCIA_FOR
       {$$ = $1;}
       | SENTENCIA_FOR_LIST
       {$$ = $1;}
+      | SENTENCIA_DO_WHILE s_dot_coma
+      {$$ = $1;}
+      | OPERADOR_INCREMENTO s_dot_coma
+      {$$ = $1;} 
+      | OPERADOR_DECREMENTO s_dot_coma
+      {$$ = $1;} 
       | SENTENCIA_LLAMADA s_dot_coma
       {$$ = $1;} 
       | SENTENCIA_ACCESO s_dot_coma
@@ -555,7 +559,7 @@ DECLARACION_PARAMETRO
         var linea = yylineno;
         var columna = yyleng;
 
-        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: $1, tipo: $3, valor: null};
+        $$ = {etiqueta: 'sentencia_declaracion', linea: linea, columna: columna, constante: false, identificador: [$1], tipo: $3, valor: null};
       }
     ;
 
@@ -588,9 +592,11 @@ EXPRESION
     | OPERADOR_TERNARIO  
       {$$ = $1;}   
     | s_par_open EXPRESION s_par_close
-      {$$ = $2;}  
+      {$$ = $2;}
+    | SENTENCIA_LLAMADA  
+      {$$ = $1;}    
     | SENTENCIA_ACCESO
-      {$$ = $1;}           
+      {$$ = $1;}   
     | DATO_PRIMITIVO
       {$$ = $1;} 
     ;
@@ -693,7 +699,7 @@ OPERADOR_UNARIO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'operador_urinario', linea: linea, columna: columna, expresion1: $2};
+        $$ = {etiqueta: 'operador_unario', linea: linea, columna: columna, expresion1: $2};
       }
     ;
 

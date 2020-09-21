@@ -30,11 +30,11 @@ class Sentencia_Do_While extends Instruction
                 Tabla_Simbolos.getInstance().getStack()._push(this.fila,this.columna,entorno_actual);
 
                 var val_sentencia: Simbolo;
-                console.log(this.lista_sentencias);
+                
                 for(var x = 0; x <  this.lista_sentencias.length; x++)
                 {                    
                     val_sentencia = this.lista_sentencias[x].ejecutar(entorno_actual,salida);
-
+                    
                     if (val_sentencia.getRol() == tipo_rol.error)
                     {                        
                         _return = val_sentencia;
@@ -74,9 +74,9 @@ class Sentencia_Do_While extends Instruction
                     _return.setValor("Sentencia Do While Ejecutada correctamente");  
                     return _return;
                 }                 
-
+                
                 tmp_val = (this.sentencia_comparacion == null) ? null : this.sentencia_comparacion.ejecutar(entorno_padre,salida);
-
+                
                 if (tmp_val == null)
                 {
                     _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
@@ -93,14 +93,14 @@ class Sentencia_Do_While extends Instruction
     
                 if(tmp_val.getTipo().getTipo() != tipo_dato.BOOLEANO)
                 {
-                    _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
+                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
                     _return.setFila(this.fila);
                     _return.setColumna(this.columna);
                     _return.setValor("No es posible realizar Sentencia Do While, expresión no da como resultado un valor booleano.");
                     return _return;
                 }
             }
-            while(<Boolean>(tmp_val.getValor()))         
+            while(<Boolean>(tmp_val.getValor()));         
                        
             _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
             _return.setFila(this.fila);
@@ -123,7 +123,7 @@ class Sentencia_Do_While extends Instruction
         var clon_lista_sentencias: Array<Instruction> = new Array<Instruction>();
         
         for(var x = 0; x < this.lista_sentencias.length; x++)
-        {
+        {  
             clon_lista_sentencias.push(this.lista_sentencias[x].getThis());
         }
         

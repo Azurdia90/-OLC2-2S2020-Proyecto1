@@ -18,8 +18,7 @@ class And extends Expresion
         {
             let op1 : Simbolo = (this.operador_izq == null) ? null : this.operador_izq.ejecutar(entorno_padre, salida);
             let op2 : Simbolo = (this.operador_der == null) ? null : this.operador_der.ejecutar(entorno_padre, salida);
-
-
+            
             if (op1 == null || op2 == null)
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12");
@@ -28,13 +27,13 @@ class And extends Expresion
                 _return.setValor("Operador vacio");
                 return _return;
             }
-
-            if (op1.getRol() != tipo_rol.valor || op1.getRol() != tipo_rol.arreglo)
+            
+            if (op1.getRol() != tipo_rol.valor && op1.getRol() != tipo_rol.arreglo)
             {
                 return op1;
             }
 
-            if (op2.getRol() != tipo_rol.valor || op2.getRol() != tipo_rol.arreglo)
+            if (op2.getRol() != tipo_rol.valor && op2.getRol() != tipo_rol.arreglo)
             {
                 return op2;
             }
@@ -68,7 +67,7 @@ class And extends Expresion
     }
     
     public getThis() 
-    {
+    {    
         return new And(this.fila,this.columna,this.operador_izq.getThis(),this.operador_der.getThis());
     }
 }

@@ -8,13 +8,13 @@ class Igual_Que extends Expresion
 {
     protected matriz_operacion_igual_que : tipo_operacion_resultado[][] = 
     [   /*                                      void                            nulo                           booleano                         numero                                        cadena                                       identificador                          error 
-        /*void*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,      tipo_operacion_resultado.error,      tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
-        /*nulo*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.igual_nulo,            tipo_operacion_resultado.igual_nulo,            tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error],
-        /*booleano*/      [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error,      tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
-        /*numero*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error,      tipo_operacion_resultado.igual_numerico,        tipo_operacion_resultado.igual_cadena_numerico, tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
-        /*String*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error,      tipo_operacion_resultado.igual_cadena_numerico, tipo_operacion_resultado.igual_cadena,          tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
-        /*identificador*/ [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error,      tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
-        /*error*/         [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,      tipo_operacion_resultado.error,      tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
+        /*void*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,      tipo_operacion_resultado.error,          tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
+        /*nulo*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.igual_nulo,     tipo_operacion_resultado.igual_nulo,            tipo_operacion_resultado.igual_nulo,            tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error],
+        /*booleano*/      [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.igual_booleano, tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
+        /*numero*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.igual_numerico,        tipo_operacion_resultado.igual_numerico_cadena, tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
+        /*String*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.igual_cadena_numerico, tipo_operacion_resultado.igual_cadena,          tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
+        /*identificador*/ [ tipo_operacion_resultado.error, tipo_operacion_resultado.igual_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
+        /*error*/         [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,      tipo_operacion_resultado.error,          tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,                 tipo_operacion_resultado.error,      tipo_operacion_resultado.error],
     ];
 
     constructor(p_fila : number, p_columna : number, p_operador_izq : Instruction, p_operador_der : Instruction)
@@ -60,9 +60,13 @@ class Igual_Que extends Expresion
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
                     _return.setValor((op1.getValor().toString() == "null") && (op2.getValor().toString() == "null"));
                     return _return;
+                case tipo_operacion_resultado.igual_booleano:
+                        _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
+                        _return.setValor(<Boolean>(op1.getValor()) == <Boolean>(op2.getValor()));
+                        return _return;
                 case tipo_operacion_resultado.igual_numerico:
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
-                    _return.setValor(Number(op1.getValor()) == Number(op2.getValor()));
+                    _return.setValor(Number(op1.getValor().toString()) == Number(op2.getValor().toString()));
                     return _return;
                 case tipo_operacion_resultado.igual_cadena_numerico:
                     var numero = 0;
@@ -73,7 +77,7 @@ class Igual_Que extends Expresion
                     }
 
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
-                    _return.setValor(numero == Number(op2.getValor()));
+                    _return.setValor(numero == Number(op2.getValor().toString()));
                     return _return;
                 case tipo_operacion_resultado.igual_numerico_cadena:
                     var numero = 0;
@@ -84,7 +88,7 @@ class Igual_Que extends Expresion
                     }
                     
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
-                    _return.setValor(Number(op1.getValor()) == numero);
+                    _return.setValor(Number(op1.getValor().toString()) == numero);
                     return _return;
                 case tipo_operacion_resultado.igual_cadena:
                     var numero1 = 0;

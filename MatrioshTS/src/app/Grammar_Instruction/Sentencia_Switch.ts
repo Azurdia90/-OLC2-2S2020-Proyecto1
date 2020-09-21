@@ -22,7 +22,7 @@ class Sentencia_Switch extends Instruction
     {
         let _return : Simbolo;
         let tmp_val : Simbolo;
-        console.log(Tabla_Simbolos.getInstance().getStack());
+        
         try
         {
             tmp_val = (this.valor_condicion == null) ? null : this.valor_condicion.ejecutar(entorno_padre,salida);
@@ -52,7 +52,7 @@ class Sentencia_Switch extends Instruction
 
             var tmp_caso: Sentencia_Caso;
             var val_caso: Simbolo;
-            console.log(tmp_val);
+            
             for(var x = 0; x <  this.lista_casos.length; x++)
             {           
                 tmp_caso = <Sentencia_Caso> this.lista_casos[x]; 
@@ -107,7 +107,7 @@ class Sentencia_Switch extends Instruction
         var clon_lista_casos: Array<Instruction> = new Array<Instruction>();
         
         for(var x = 0; x < this.lista_casos.length; x++)
-        {
+        {   
             clon_lista_casos.push(this.lista_casos[x].getThis());
         }
         

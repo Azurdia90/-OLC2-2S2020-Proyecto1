@@ -62,12 +62,12 @@ class Tabla_Simbolos
     public getFuncion(p_identificador : String)
     {
         let _return : Funcion;        
-        
+        //if(p_identificador == "SentenciasAnidadas"){console.log(this.lista_funciones);}
         for(var x : number = 0; x < this.lista_funciones.length; x++)
-        {
+        {   
             let funcion_actual : Funcion = this.lista_funciones[x];
             if(funcion_actual.getIdentificador() == p_identificador)
-            {   //console.log(funcion_actual.getThis());
+            {   //if(funcion_actual.getIdentificador() == "SentenciasAnidadas"){console.log(funcion_actual.getThis());}
                 return funcion_actual.getThis();
             }
         }

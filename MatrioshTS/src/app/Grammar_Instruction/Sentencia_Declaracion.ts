@@ -110,12 +110,20 @@ class Sentencia_Declaracion extends Instruction
 
         if(this.valor != undefined)
         {
-            sentencia_declaracion.setValor(this.valor);
+            sentencia_declaracion.setValor(this.valor.getThis());
+        }
+        else
+        {
+            sentencia_declaracion.setValor(undefined);
         }
 
         if(this.tipo != undefined)
         {
             sentencia_declaracion.setTipo(this.tipo);
+        }
+        else
+        {
+            sentencia_declaracion.setTipo(undefined);
         }
 
         return sentencia_declaracion;

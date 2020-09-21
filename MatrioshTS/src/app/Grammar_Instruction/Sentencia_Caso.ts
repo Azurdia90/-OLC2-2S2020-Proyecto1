@@ -41,7 +41,7 @@ class Sentencia_Caso extends Instruction
                     _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "10-4");
                     _return.setFila(this.fila);
                     _return.setColumna(this.columna);
-                    _return.setValor("Sentencia While: Expresión comparación vacia");
+                    _return.setValor("Sentencia Switch: Expresión comparación vacia");
                     return _return;
                 }
     
@@ -55,7 +55,7 @@ class Sentencia_Caso extends Instruction
                     _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "10-4");
                     _return.setFila(this.fila);
                     _return.setColumna(this.columna);
-                    _return.setValor("Sentencia While: Expresión comparación vacia");
+                    _return.setValor("Sentencia Switch: Expresión comparación vacia");
                     return _return;
                 }
     
@@ -159,7 +159,7 @@ class Sentencia_Caso extends Instruction
             clon_lista_sentencias.push(this.lista_sentencias[x].getThis());
         }
         
-        return new Sentencia_Caso(this.fila,this.columna,this.default,this.valor_comparacion.getThis(),clon_lista_sentencias);
+        return new Sentencia_Caso(this.fila,this.columna,this.default,this.valor_comparacion == undefined ? undefined : this.valor_comparacion.getThis(),clon_lista_sentencias);
     }
 }
 

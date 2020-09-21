@@ -10,8 +10,8 @@ class Diferente_Que extends Expresion
     [   /*                                      void                            nulo                           booleano                                       numero                                                cadena                                           identificador                          error 
         /*void*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,          tipo_operacion_resultado.error,          tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
         /*nulo*/          [ tipo_operacion_resultado.error, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.diferente_nulo,            tipo_operacion_resultado.diferente_nulo,            tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.error],
-        /*booleano*/      [ tipo_operacion_resultado.error, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
-        /*numero*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.diferente_numerico,        tipo_operacion_resultado.diferente_cadena_numerico, tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
+        /*booleano*/      [ tipo_operacion_resultado.error, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
+        /*numero*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.diferente_numerico,        tipo_operacion_resultado.diferente_numerico_cadena, tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
         /*String*/        [ tipo_operacion_resultado.error, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.diferente_cadena_numerico, tipo_operacion_resultado.diferente_cadena,          tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
         /*identificador*/ [ tipo_operacion_resultado.error, tipo_operacion_resultado.diferente_nulo, tipo_operacion_resultado.error,          tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
         /*error*/         [ tipo_operacion_resultado.error, tipo_operacion_resultado.error,          tipo_operacion_resultado.error,          tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,                     tipo_operacion_resultado.error,          tipo_operacion_resultado.error],
@@ -60,9 +60,13 @@ class Diferente_Que extends Expresion
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
                     _return.setValor((op1.getValor().toString() != "null") && (op2.getValor().toString() == "null"));
                     return _return;
+                case tipo_operacion_resultado.diferente_booleano:
+                        _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
+                        _return.setValor(<Boolean>(op1.getValor()) != <Boolean>(op2.getValor()));
+                        return _return;
                 case tipo_operacion_resultado.diferente_numerico:
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
-                    _return.setValor(Number(op1.getValor()) != Number(op2.getValor()));
+                    _return.setValor(Number(op1.getValor().toString()) != Number(op2.getValor().toString()));
                     return _return;
                 case tipo_operacion_resultado.diferente_cadena_numerico:
                     var numero = 0;
@@ -73,7 +77,7 @@ class Diferente_Que extends Expresion
                     }
 
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
-                    _return.setValor(numero != Number(op2.getValor()));
+                    _return.setValor(numero != Number(op2.getValor().toString()));
                     return _return;
                 case tipo_operacion_resultado.diferente_numerico_cadena:
                     var numero = 0;
@@ -84,7 +88,7 @@ class Diferente_Que extends Expresion
                     }
                     
                     _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.BOOLEANO), "");
-                    _return.setValor(Number(op1.getValor()) != numero);
+                    _return.setValor(Number(op1.getValor().toString()) != numero);
                     return _return;
                 case tipo_operacion_resultado.diferente_cadena:
                     var numero1 = 0;

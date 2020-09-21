@@ -258,9 +258,9 @@ class AST
             var lista_sentencias_else_if : Array<Instruction>;
             var lista_sentencias_else : Array<Instruction>;
 
-            lista_sentencias_if = new Array<Tipo_Acceso>();
-            lista_sentencias_else_if = new Array<Tipo_Acceso>();
-            lista_sentencias_else = new Array<Tipo_Acceso>();
+            lista_sentencias_if = new Array<Instruction>();
+            lista_sentencias_else_if = new Array<Instruction>();
+            lista_sentencias_else = new Array<Instruction>();
 
             for(var x = 0; x < instruccion_jason['sentencias1'].length; x++)
             {
@@ -364,6 +364,14 @@ class AST
             }
 
             return new Sentencia_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['identificador'], lista_accesos);
+        }
+        else if(instruccion_jason['etiqueta'] == 'operador_incremento')
+        {
+            return this.fabrica_expresiones(instruccion_jason);
+        }
+        else if(instruccion_jason['etiqueta'] == 'operador_decremento')
+        {
+            return this.fabrica_expresiones(instruccion_jason);
         }
         else if(instruccion_jason['etiqueta'] == 'tipo_acceso')
         {

@@ -27,7 +27,7 @@ class Sentencia_If extends Instruction
         let _return : Simbolo;
         let tmp_val : Simbolo
         try
-        {
+        {   
             tmp_val = (this.sentencia_comparacion == null) ? null : this.sentencia_comparacion.ejecutar(entorno_padre,salida);
 
             if (tmp_val == null)
