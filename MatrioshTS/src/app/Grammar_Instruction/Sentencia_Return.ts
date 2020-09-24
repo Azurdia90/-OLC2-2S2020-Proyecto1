@@ -16,11 +16,18 @@ class Sentencia_Return extends Instruction
     public ejecutar(entorno_padre : Map<String,Simbolo>, salida : Middle)
     {
         var _return: Simbolo;
+        var _return_tmp  : Simbolo;
         try
         {
             if(this.valor != undefined)
             {
-                return this.valor.ejecutar(entorno_padre, salida);
+                _return_tmp = this.valor.ejecutar(entorno_padre, salida);
+
+                _return = new Simbolo(tipo_rol.retornar,_return_tmp.getTipo(), "");
+                _return.setFila(this.fila);
+                _return.setColumna(this.columna);
+                _return.setValor(_return_tmp);
+                return  _return;
             }
             else
             {

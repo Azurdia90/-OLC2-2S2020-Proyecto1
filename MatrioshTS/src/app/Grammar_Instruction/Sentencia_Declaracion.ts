@@ -7,19 +7,25 @@ class Sentencia_Declaracion extends Instruction
 {
     protected identificadores : String[];
 
-    protected tipo : Tipo;
-    protected valor :  Instruction;
-    protected valor_ext : Simbolo;
     protected const : Boolean;
+    protected tipo : Tipo;
+    protected rol : tipo_rol;
+    protected dimensiones: number;
+    protected valor :  Instruction;
 
-    constructor(p_fila: number, p_columna: number, p_const : Boolean, p_lista_id : String[], p_valor? : Instruction, p_tipo? : Tipo)
+    protected valor_ext : Simbolo;
+   
+    constructor(p_fila: number, p_columna: number, p_const : Boolean, p_lista_id : String[], p_tipo? : Tipo, p_rol? : tipo_rol, p_dimensiones? : number, p_valor? : Instruction)
     {
         super(p_fila,p_columna);
         
-        this.const = p_const;
         this.identificadores = p_lista_id;
-        this.valor = p_valor;
+
+        this.const = p_const;
         this.tipo = p_tipo;
+        this.rol = p_rol;
+        this.dimensiones = p_dimensiones;
+        this.valor = p_valor;
 
         this.valor_ext  = undefined;
     }
@@ -49,9 +55,53 @@ class Sentencia_Declaracion extends Instruction
                 _val_fin = this.valor.ejecutar(entorno_padre, salida);
             }
             
-            if (_val_fin.getRol() != tipo_rol.valor && _val_fin.getRol() != tipo_rol.arreglo)
+            if (_val_fin.getRol() != tipo_rol.valor && _val_fin.getRol() != tipo_rol.arreglo && _val_fin.getRol() != tipo_rol.type)
             {
                 return _val_fin;
+            }
+
+            if(this.rol != _val_fin.getRol())
+            {
+                if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.arreglo)
+                {
+                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    nuevo_simbolo.setValor("No es posible asignar un arreglo a un valor primitivo.");
+                    nuevo_simbolo.setFila(this.fila);
+                    nuevo_simbolo.setColumna(this.columna);
+                    return nuevo_simbolo;
+                }
+                else if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.type)
+                {
+                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    nuevo_simbolo.setValor("No es posible asignar un type a un valor primitivo.");
+                    nuevo_simbolo.setFila(this.fila);
+                    nuevo_simbolo.setColumna(this.columna);
+                    return nuevo_simbolo;
+                }
+                if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.valor)
+                {
+                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    nuevo_simbolo.setValor("No es posible asignar un valor primitivo a un arreglo.");
+                    nuevo_simbolo.setFila(this.fila);
+                    nuevo_simbolo.setColumna(this.columna);
+                    return nuevo_simbolo;
+                }
+                else if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.type)
+                {
+                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    nuevo_simbolo.setValor("No es posible asignar un type a un arreglo.");
+                    nuevo_simbolo.setFila(this.fila);
+                    nuevo_simbolo.setColumna(this.columna);
+                    return nuevo_simbolo;
+                }
+                else
+                {
+                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    nuevo_simbolo.setValor("Sentencia Declaración: No se encuentran definidos los roles.");
+                    nuevo_simbolo.setFila(this.fila);
+                    nuevo_simbolo.setColumna(this.columna);
+                    return nuevo_simbolo;
+                }                
             }
             
             if(this.tipo != undefined)
@@ -68,6 +118,10 @@ class Sentencia_Declaracion extends Instruction
                     }
                 }
             }
+            else
+            {
+                this.tipo = _val_fin.getTipo();
+            }
 
             for(var cont : number = 0; cont < this.identificadores.length; cont++)
             {
@@ -81,7 +135,7 @@ class Sentencia_Declaracion extends Instruction
                 }
                 else
                 {
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.valor,_val_fin.getTipo(),this.identificadores[cont]); 
+                    var nuevo_simbolo : Simbolo = new Simbolo(this.rol,this.tipo,this.identificadores[cont]); 
                     nuevo_simbolo.setValor(_val_fin.getValor());
                     nuevo_simbolo.setConstante(this.const);
                     entorno_padre.set(this.identificadores[cont],nuevo_simbolo);

@@ -48,11 +48,13 @@ class Operador_Ternario extends Expresion
             {   
                 if(<Boolean> tmp_val.getValor())
                 {
-                    return this.operador_izq.ejecutar(entorno_padre,salida);
+                    _return = this.operador_izq.ejecutar(entorno_padre,salida);
+                    return _return;
                 }
                 else 
                 {
-                    return this.operador_der.ejecutar(entorno_padre,salida);
+                    _return = this.operador_der.ejecutar(entorno_padre,salida);
+                    return _return;
                 }
             }
             

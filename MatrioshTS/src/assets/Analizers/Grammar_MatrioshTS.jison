@@ -191,28 +191,6 @@ SENTENCIA
       {$$ = $1;}
     ;
 
-TIPO
-    : r_void
-      {$$ = {etiqueta: 'tipo', tipo: 0, valor: $1};}
-    | r_nulo
-      {$$ = {etiqueta: 'tipo', tipo: 1, valor: $1};}
-    | r_boolean
-      {$$ = {etiqueta: 'tipo', tipo: 2, valor: $1};}
-    | r_number
-      {$$ = {etiqueta: 'tipo', tipo: 3, valor: $1};}
-    | identificador
-      {
-        if($1.toLowerCase() == "String")
-        {
-          $$ = {etiqueta: 'tipo', tipo: 4, valor: $1};
-        }
-        else
-        {
-          $$ = {etiqueta: 'tipo', tipo: 5, valor: $1};
-        }
-      }
-    ;
-
 LISTA_IDENTIFICADORES
     : LISTA_IDENTIFICADORES s_coma identificador
       { 
@@ -563,6 +541,53 @@ DECLARACION_PARAMETRO
       }
     ;
 
+/***************************************************************************LISTAS DE PRODUCCIONES TIPOS DE DATOS*********************************************************************************************************/
+
+TIPO
+    : r_boolean LISTA_DIMENSIONES
+      {$$ = {etiqueta: "tipo", tipo: 2, valor: $1, rol: 1, dimensiones: $2};}
+    | r_number LISTA_DIMENSIONES
+      {$$ = {etiqueta: "tipo", tipo: 3, valor: $1, rol: 1, dimensiones: $2};} 
+    | identificador LISTA_DIMENSIONES
+      {
+        if($1.toLowerCase() == "String")
+        {
+          $$ = {etiqueta: "tipo", tipo: 4, valor: $1, rol: 1, dimensiones: $2};
+        }
+        else
+        {
+          $$ = {etiqueta: "tipo", tipo: 5, valor: $1, rol: 1, dimensiones: $2};
+        }
+      }
+    | r_void
+      {$$ = {etiqueta: 'tipo', tipo: 0, valor: $1, rol: 0};}
+    | r_nulo
+      {$$ = {etiqueta: 'tipo', tipo: 1, valor: $1, rol: 0};}
+    | r_boolean
+      {$$ = {etiqueta: 'tipo', tipo: 2, valor: $1, rol: 0};}
+    | r_number
+      {$$ = {etiqueta: 'tipo', tipo: 3, valor: $1, rol: 0};}
+    | identificador
+      {
+        if($1.toLowerCase() == "String")
+        {
+          $$ = {etiqueta: 'tipo', tipo: 4, valor: $1, rol: 0};
+        }
+        else
+        {
+          $$ = {etiqueta: 'tipo', tipo: 5, valor: $1, rol: 0};
+        }
+      }
+    |
+    ;
+
+LISTA_DIMENSIONES
+  : LISTA_DIMENSIONES s_cor_open s_cor_close
+  { $$ = $1 + 1;}
+  | s_cor_open s_cor_close
+  { $$ = 1;}
+  ;
+
 /***************************************************************************LISTAS DE PRODUCCIONES EXPRESIONES*********************************************************************************************************/
 LISTA_EXPRESIONES 
     : LISTA_EXPRESIONES s_coma EXPRESION
@@ -593,6 +618,8 @@ EXPRESION
       {$$ = $1;}   
     | s_par_open EXPRESION s_par_close
       {$$ = $2;}
+    | SENTENCIA_INSTANCIA
+      {$$ = $1;}
     | SENTENCIA_LLAMADA  
       {$$ = $1;}    
     | SENTENCIA_ACCESO
@@ -729,6 +756,21 @@ OPERADOR_TERNARIO
       $$ = {etiqueta: "operador_ternario", linea: linea, columna: columna, condicion: $1 , expresion1: $3, expresion2: $5};
     }
     ;
+
+SENTENCIA_INSTANCIA
+  : s_cor_open  s_cor_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: []};
+    }
+  | s_cor_open LISTA_EXPRESIONES s_cor_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: LISTA_EXPRESIONES};
+    }
+  ;
 
 SENTENCIA_ACCESO  
   : identificador LISTA_ACCESOS
