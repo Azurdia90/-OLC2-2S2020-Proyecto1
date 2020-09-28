@@ -170,9 +170,9 @@ class Sentencia_For extends Instruction
     public getThis() 
     {
         var clon_lista_sentencias: Array<Instruction> = new Array<Instruction>();
-        
+    
         for(var x = 0; x < this.lista_sentencias.length; x++)
-        {
+        {   
             clon_lista_sentencias.push(this.lista_sentencias[x].getThis());
         }
         

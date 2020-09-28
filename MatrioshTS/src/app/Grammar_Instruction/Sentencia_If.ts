@@ -23,11 +23,11 @@ class Sentencia_If extends Instruction
     }
 
     public ejecutar(entorno_padre : Map<String, Simbolo> , salida : Middle)
-    {
+    {   let etapa : number;
         let _return : Simbolo;
-        let tmp_val : Simbolo
+        let tmp_val : Simbolo;
         try
-        {   
+        {   etapa = 0;
             tmp_val = (this.sentencia_comparacion == null) ? null : this.sentencia_comparacion.ejecutar(entorno_padre,salida);
 
             if (tmp_val == null)
@@ -52,9 +52,9 @@ class Sentencia_If extends Instruction
                 _return.setValor("No es posible realizar Sentencia If, expresión no da como resultado un valor booleano.");
                 return _return;
             }
-            //console.log(tmp_val);
+            etapa = 1;
             if (<Boolean>(tmp_val.getValor()))
-            {
+            {   etapa = 2;
                 let entorno_actual: Map<String, Simbolo> = new Map<String, Simbolo>();
                 Tabla_Simbolos.getInstance().getStack()._push(this.fila,this.columna,entorno_actual);
 
@@ -105,11 +105,11 @@ class Sentencia_If extends Instruction
             else //sentencias else if y else
             {                                                
                 var val_sentencia : Simbolo;
-                
+                etapa = 2.1; 
                 for(var x= 0; x < this.lista_else_if.length; x++)
                 {                    
                     val_sentencia = this.lista_else_if[x].ejecutar(entorno_padre,salida);
-
+                  
                     if(val_sentencia.getRol() == tipo_rol.error)
                     {                        
                         _return = val_sentencia;
@@ -130,12 +130,13 @@ class Sentencia_If extends Instruction
                         _return = val_sentencia;
                         return _return;
                     }
-                    else if(_return.getRol() == tipo_rol.aceptado)
+                    else if(val_sentencia.getRol() == tipo_rol.aceptado)
                     {                        
-                        if(_return.getTipo().getTipo() == tipo_dato.BOOLEANO)
+                        if(val_sentencia.getTipo().getTipo() == tipo_dato.BOOLEANO)
                         {
-                            if(<Boolean>_return.getValor())
+                            if(<Boolean>val_sentencia.getValor())
                             {
+                                _return = val_sentencia;
                                 return _return;
                             }
                             else
@@ -153,16 +154,16 @@ class Sentencia_If extends Instruction
                         _return = val_sentencia;
                     }
                 }                                
-                
+                etapa = 2.11;
                 var entorno_actual : Map<String, Simbolo> = new Map<String, Simbolo>();
                 Tabla_Simbolos.getInstance().getStack()._push(this.fila,this.columna,entorno_actual);
-
+                etapa = 2.12;
                 var val_sentencia_else : Simbolo;
-
+                etapa = 2.2;
                 for(var x = 0; x < this.lista_sentencias_else.length; x++)
                 {
                     val_sentencia_else = this.lista_sentencias_else[x].ejecutar(entorno_actual,salida);
-                    //console.log(val_sentencia_else);
+                    
                     if(val_sentencia_else.getRol() == tipo_rol.error) //ERROR
                     {
                         Tabla_Simbolos.getInstance().getStack().pop();
@@ -195,10 +196,10 @@ class Sentencia_If extends Instruction
                 
                 Tabla_Simbolos.getInstance().getStack().pop();
             
-                _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA), "10-4");
+                _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.BOOLEANO), "10-4");
                 _return.setFila(this.fila);
                 _return.setColumna(this.columna);
-                _return.setValor("Sentencia IF Ejecutada correctamente");  
+                _return.setValor(false);  
                 return _return;
             }
         }
@@ -207,7 +208,7 @@ class Sentencia_If extends Instruction
             _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
             _return.setFila(this.fila);
             _return.setColumna(this.columna);
-            _return.setValor("Error Sentencia If: " + Exception.Message);
+            _return.setValor("Error Sentencia If: " + etapa + "" + Exception.Message);
             return _return;
         }
     }
@@ -222,14 +223,14 @@ class Sentencia_If extends Instruction
         {   
             clon_lista_sentencias_if.push(this.lista_sentencias_if[x].getThis());
         }
-    
+       
         for(var y = 0; y < this.lista_else_if.length; y++)
-        {
+        {  
             clon_lista_else_if.push(this.lista_else_if[y].getThis());
         }
         
         for(var z = 0; z < this.lista_sentencias_else.length; z++)
-        {
+        {   
             clon_lista_sentencias_else.push(this.lista_sentencias_else[z].getThis());
         }
        

@@ -6,41 +6,34 @@ import Tipo from './Tipo';
 
 class Funcion_Log extends Funcion
 {
-    private valor_imprimir : Simbolo;
+    private valores_imprimir : Array<Simbolo>;
 
     constructor(p_fila : number, p_columna : number)
     {
         super(p_fila, p_columna, "log", new Array<Instruction>(), undefined);
     }
 
-    public pasarParametros(lista_parametros_enviados : Array<Simbolo>, salida : Middle)
+    public pasarParametros(lista_parametros_enviados : Array<Simbolo>, salida : Middle, padre? : Simbolo)
     {
         let _return : Simbolo;
         
-        if(lista_parametros_enviados.length == 0)
+        if(lista_parametros_enviados.length > 0)
         {
-            _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-            _return.setFila(this.fila);
-            _return.setColumna(this.columna);
-            _return.setValor("Función Log: valor vacio");
-            return _return;
-        }else if (lista_parametros_enviados.length > 1)
-        {
-            _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-            _return.setFila(this.fila);
-            _return.setColumna(this.columna);
-            _return.setValor("Función Log: se envió mas de un valor");
-            return _return;
-        }
-        else
-        {
-            this.valor_imprimir = lista_parametros_enviados[0];
+            this.valores_imprimir = lista_parametros_enviados;
 
             _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4");
             _return.setFila(this.fila);
             _return.setColumna(this.columna); 
             _return.setValor("Paso de Parametros Succesful");
             return _return;
+        }
+        else
+        {
+            _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
+            _return.setFila(this.fila);
+            _return.setColumna(this.columna);
+            _return.setValor("Función Log: valor vacio");
+            return _return;            
         }      
     }
     
@@ -51,61 +44,16 @@ class Funcion_Log extends Funcion
         try
         {  
             //console.log(this.valor_imprimir);
+            var salida_tmp: String;
+
+            salida_tmp = "";
+
+            for(var i = 0; i < this.valores_imprimir.length; i++)
+            {
+                salida_tmp = salida_tmp.concat(this.print(this.valores_imprimir[i]).toString());
+            }
             
-            if(this.valor_imprimir.getRol()== tipo_rol.valor)
-            {
-                salida.setOuput(this.valor_imprimir.tostring());
-            }
-            else if(this.valor_imprimir.getRol()== tipo_rol.arreglo)
-            {                
-                var contenido : String = "[";
-                
-                for(var x = 0; x < (<Array<Simbolo>>this.valor_imprimir.getValor()).length; x++)
-                {
-                    if(x >0)
-                    {   
-                        if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.arreglo)
-                        {
-                            contenido = contenido.concat(",", this.printlist(this.valor_imprimir.getValor()[x]).toString());
-                        }
-                        else if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.type)
-                        {
-                            contenido = contenido.concat(",",this.valor_imprimir.getValor()[x].tostring());
-                        }
-                        else
-                        {
-                            contenido = contenido.concat(",",this.valor_imprimir.getValor()[x].tostring());
-                        }
-                    }
-                    else
-                    {
-                        if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.arreglo)
-                        {
-                            contenido = contenido.concat('', this.printlist(this.valor_imprimir.getValor()[x].toString()).toString());
-                        }
-                        else if(this.valor_imprimir.getValor()[x].getRol() == tipo_rol.type)
-                        {
-                            contenido = contenido.concat(this.valor_imprimir.getValor()[x].tostring());
-                        }
-                        else
-                        {
-                            contenido = contenido.concat(this.valor_imprimir.getValor()[x].totring());
-                        }
-                    }
-                }
-                
-                contenido = contenido.concat("]");                                    
-                
-                salida.setOuput(contenido);                
-            }
-            else if(this.valor_imprimir.getRol() == tipo_rol.type)
-            {
-                salida.setOuput(this.valor_imprimir.toString());
-            }
-            else
-            {
-                salida.setOuput("Excepción: Tipo de dato no recnocido, fila: " + this.fila + " columna: " + this.columna);
-            }
+            salida.setOuput(salida_tmp);
             
             _return = new Simbolo(tipo_rol.aceptado,new Tipo(tipo_dato.CADENA),"10-4");
             _return.setFila(this.fila);
@@ -123,6 +71,69 @@ class Funcion_Log extends Funcion
             return _return;
         }
     }    
+
+    private print(valor_imprimir: Simbolo)
+    {
+        let salida : String;
+        salida = "";
+
+        if(valor_imprimir.getRol()== tipo_rol.valor)
+        {
+            salida = valor_imprimir.tostring();
+        }
+        else if(valor_imprimir.getRol()== tipo_rol.arreglo)
+        {                
+            var contenido : String = "[";
+            
+            for(var x = 0; x < (<Array<Simbolo>>valor_imprimir.getValor()).length; x++)
+            {
+                if(x >0)
+                {   
+                    if(valor_imprimir.getValor()[x].getRol() == tipo_rol.arreglo)
+                    {
+                        contenido = contenido.concat(",", this.printlist(valor_imprimir.getValor()[x]).toString());
+                    }
+                    else if(valor_imprimir.getValor()[x].getRol() == tipo_rol.type)
+                    {
+                        contenido = contenido.concat(",",valor_imprimir.getValor()[x].tostring());
+                    }
+                    else
+                    {
+                        contenido = contenido.concat(",",valor_imprimir.getValor()[x].tostring());
+                    }
+                }
+                else
+                {
+                    if(valor_imprimir.getValor()[x].getRol() == tipo_rol.arreglo)
+                    {
+                        contenido = contenido.concat('', this.printlist(valor_imprimir.getValor()[x].toString()).toString());
+                    }
+                    else if(valor_imprimir.getValor()[x].getRol() == tipo_rol.type)
+                    {
+                        contenido = contenido.concat(valor_imprimir.getValor()[x].tostring());
+                    }
+                    else
+                    {
+                        contenido = contenido.concat(valor_imprimir.getValor()[x].tostring());
+                    }
+                }
+            }
+            
+            contenido = contenido.concat("]");                                    
+            
+            salida = contenido;                
+        }
+        else if(valor_imprimir.getRol() == tipo_rol.type)
+        {
+            salida = valor_imprimir.tostring();
+        }
+        else
+        {
+            salida = "Excepción: Tipo de dato no recnocido, fila: " + this.fila + " columna: " + this.columna;
+        }
+
+        return salida;
+    }
     
     private printlist(sim_list : Simbolo)
     {

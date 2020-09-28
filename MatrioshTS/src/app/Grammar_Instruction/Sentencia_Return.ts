@@ -31,10 +31,13 @@ class Sentencia_Return extends Instruction
             }
             else
             {
+                var simbolo_retorno = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.VOID), "");
+                simbolo_retorno.setValor("null");
+
                 _return = new Simbolo(tipo_rol.retornar,new Tipo(tipo_dato.CADENA), "");
                 _return.setFila(this.fila);
                 _return.setColumna(this.columna);
-                _return.setValor("Sentencia Return");
+                _return.setValor(simbolo_retorno);
                 return _return;
             }
         }

@@ -32,61 +32,7 @@ class Tipo_Acceso extends Instruction
         try
         {
             if(this.tipo == 0)
-            {
-                if(this.padre.getRol() == tipo_rol.arreglo)
-                {
-                    var pos : Simbolo;
-                    pos = this.expresion1.ejecutar(entorno_padre, salida);
-
-                    if(pos.getRol() == tipo_rol.valor && pos.getTipo().getTipo() == tipo_dato.NUMERO)
-                    {
-                        var pos_rel : Number;
-                        pos_rel = Number(pos.getValor());
-                        if(pos_rel < 0)
-                        {
-                            _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                            _return.setFila(this.fila);
-                            _return.setColumna(this.columna);
-                            _return.setValor("Error Operador Acceso: La posición del arreglo debe ser mayor o igual a 0.");
-                            return _return;
-
-                        }
-                        else if(pos_rel >= 0)
-                        {
-                            if((<Array<Simbolo>>this.padre.getValor()).length > pos_rel)
-                            {
-                                return (<Array<Simbolo>>this.padre.getValor())[pos_rel.valueOf()];
-                            }
-                            else
-                            {
-                                _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                                _return.setFila(this.fila);
-                                _return.setColumna(this.columna);
-                                _return.setValor("Error Operador Acceso: La posición del arreglo es mayor al tamaño del arreglo.");
-                                return _return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                        _return.setFila(this.fila);
-                        _return.setColumna(this.columna);
-                        _return.setValor("Error Operador Acceso: La posición del arreglo debe ser un valor númerico.");
-                        return _return;
-                    }
-                }
-                else
-                {
-                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
-                    _return.setFila(this.fila);
-                    _return.setColumna(this.columna);
-                    _return.setValor("Error Operador Acceso: Este tipo de acceso es válido unicamente para arreglos.");
-                    return _return;
-                }
-            }
-            else if(this.tipo == 1)
-            {
+            {   
                 if(this.padre.getRol() == tipo_rol.type)
                 {
                     var type_rel : Map<String,Simbolo>;
@@ -102,7 +48,29 @@ class Tipo_Acceso extends Instruction
                         _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
                         _return.setFila(this.fila);
                         _return.setColumna(this.columna);
-                        _return.setValor("Error Operador Acceso: Este atributo no existe aún.");
+                        _return.setValor("Error Operador Acceso: El atributo " + this.expresion3 + " no existe aún.");
+                        return _return;
+                    }
+                }
+                else if(this.padre.getRol() == tipo_rol.arreglo)
+                {   
+                    if(this.expresion3 == "length")
+                    {
+                        var arreglo_tmp: Array<Simbolo>;
+                        arreglo_tmp = <Array<Simbolo>> this.padre.getValor();
+
+                        _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.NUMERO), "33-12");
+                        _return.setFila(this.fila);
+                        _return.setColumna(this.columna);
+                        _return.setValor(arreglo_tmp.length);
+                        return _return;
+                    }
+                    else
+                    {
+                        _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
+                        _return.setFila(this.fila);
+                        _return.setColumna(this.columna);
+                        _return.setValor("Error Operador Acceso: El atributo " + this.expresion3 + " no existe aún.");
                         return _return;
                     }
                 }
@@ -111,13 +79,23 @@ class Tipo_Acceso extends Instruction
                     _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
                     _return.setFila(this.fila);
                     _return.setColumna(this.columna);
-                    _return.setValor("Error Operador Acceso: Este tipo de acceso es válido unicamente para Types.");
+                    _return.setValor("Error Operador Acceso: Este tipo de acceso es válido unicamente para Types y arregloss.");
                     return _return;
                 }
             }
-            else if(this.tipo == 2)
+            else if(this.tipo == 1)
             {
                 if(this.padre.getRol() == tipo_rol.type)
+                {
+                    (<Sentencia_Llamada> this.expresion2).setGlobal(false);
+
+                    (<Sentencia_Llamada> this.expresion2).setPadre(this.padre);
+                    
+                    _return = this.expresion2.ejecutar(entorno_padre, salida);
+
+                    return _return;
+                }
+                else if(this.padre.getRol() == tipo_rol.arreglo)
                 {
                     (<Sentencia_Llamada> this.expresion2).setGlobal(false);
 
@@ -132,7 +110,7 @@ class Tipo_Acceso extends Instruction
                     _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
                     _return.setFila(this.fila);
                     _return.setColumna(this.columna);
-                    _return.setValor("Error Operador Acceso: Este tipo de acceso es válido unicamente para Types.");
+                    _return.setValor("Error Operador Acceso: Este tipo de acceso es válido unicamente para Types y Arreglos.");
                     return _return;
                 }
             }      
@@ -142,9 +120,8 @@ class Tipo_Acceso extends Instruction
                 _return.setFila(this.fila);
                 _return.setColumna(this.columna);
                 _return.setValor("Error Valor Acceso: Tipo de Acceso no definido ");
+                return _return;
             }
-
-            return _return;
         }
         catch(Exception)
         {
@@ -172,8 +149,8 @@ class Tipo_Acceso extends Instruction
     }
 
     public getThis() 
-    {
-        return new Tipo_Acceso(this.fila, this.columna, this.tipo, this.expresion1 == undefined ? null : this.expresion1.getThis(), this.expresion2 == undefined ? null : this.expresion2.getThis(), this.expresion3 == undefined ? undefined : this.expresion3);
+    {   
+        return new Tipo_Acceso(this.fila, this.columna, this.tipo, this.expresion1 == undefined ? undefined : this.expresion1.getThis(), this.expresion2 == undefined ? undefined : this.expresion2.getThis(), this.expresion3 == undefined ? "" : this.expresion3);
     }
 
 }

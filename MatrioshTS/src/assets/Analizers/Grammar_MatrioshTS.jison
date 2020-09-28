@@ -5,6 +5,8 @@
 %%
 
 \s+                   /* skip whitespace */
+"//"[^\n]*           /*comentario lineal*/ 
+"/"[^"/#"]"/"        /*comentario multilineal*/
 
 "import"              return 'r_import'
 
@@ -269,13 +271,19 @@ SENTENCIA_ASIGNACION
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = {etiqueta: 'sentencia_asignacion', linea: linea, columna: columna, tipo: 0, acceso0: $1, acceso1: null, valor: $3}; 
+      $$ = {etiqueta: 'sentencia_asignacion', linea: linea, columna: columna, tipo: 0, acceso0: $1, acceso1: [], acceso2: null, valor: $3}; 
+    }
+    | identificador LISTA_DIMENSIONES2 s_asign EXPRESION
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'sentencia_asignacion', linea: linea, columna: columna, tipo: 1, acceso0: $1, acceso1: $2, acceso2: null, valor: $4}; 
     }
     | SENTENCIA_ACCESO s_asign EXPRESION
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = {etiqueta: 'sentencia_asignacion', linea: linea, columna: columna, tipo: 1, acceso0: null, acceso1: $1, valor: $3};
+      $$ = {etiqueta: 'sentencia_asignacion', linea: linea, columna: columna, tipo: 2, acceso0: null, acceso1: [], acceso2: $1, valor: $3};
     }
     ;
 
@@ -556,7 +564,7 @@ TIPO
         }
         else
         {
-          $$ = {etiqueta: "tipo", tipo: 5, valor: $1, rol: 1, dimensiones: $2};
+          $$ = {etiqueta: "tipo", tipo: 5, valor: $1, rol: 3, dimensiones: $2};
         }
       }
     | r_void
@@ -575,7 +583,7 @@ TIPO
         }
         else
         {
-          $$ = {etiqueta: 'tipo', tipo: 5, valor: $1, rol: 0};
+          $$ = {etiqueta: 'tipo', tipo: 5, valor: $1, rol: 3};
         }
       }
     |
@@ -623,7 +631,7 @@ EXPRESION
     | SENTENCIA_LLAMADA  
       {$$ = $1;}    
     | SENTENCIA_ACCESO
-      {$$ = $1;}   
+      {$$ = $1;}  
     | DATO_PRIMITIVO
       {$$ = $1;} 
     ;
@@ -735,7 +743,7 @@ OPERADOR_INCREMENTO
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'operador_incremento', linea: linea, columna: columna, expresion1: {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: $1}};
+        $$ = {etiqueta: 'operador_incremento', linea: linea, columna: columna, expresion1: {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: $1, dimensiones: []}};
       }  
     ;    
 
@@ -744,7 +752,7 @@ OPERADOR_DECREMENTO
       {
         var linea = yylineno;
         var columna = yyleng; 
-        $$ = {etiqueta: 'operador_decremento', linea: linea, columna: columna, expresion1: {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: $1}};
+        $$ = {etiqueta: 'operador_decremento', linea: linea, columna: columna, expresion1: {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: $1, dimensiones: []}};
       }
     ; 
 
@@ -757,6 +765,7 @@ OPERADOR_TERNARIO
     }
     ;
 
+
 SENTENCIA_INSTANCIA
   : s_cor_open  s_cor_close
     {
@@ -768,49 +777,7 @@ SENTENCIA_INSTANCIA
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: LISTA_EXPRESIONES};
-    }
-  ;
-
-SENTENCIA_ACCESO  
-  : identificador LISTA_ACCESOS
-    {
-      var linea = yylineno;
-      var columna = yyleng;
-      $$ = {etiqueta: 'sentencia_acceso', linea: linea, columna: columna, identificador: $1, lista_acceso: $2};
-    }
-  ;
-
-LISTA_ACCESOS   
-  : LISTA_ACCESOS ACCESO
-    {
-      $1.push($2);
-      $$ = $1;
-    }
-    |ACCESO
-    {
-      $$ = [$1];
-    }
-  ;
-
-ACCESO 
-  : s_cor_open EXPRESION s_cor_close
-    {
-      var linea = yylineno;
-      var columna = yyleng;
-      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 0, acceso0: $2, acceso1: null, acceso2: null};
-    }
-    | s_dot SENTENCIA_LLAMADA
-    {
-      var linea = yylineno;
-      var columna = yyleng;
-      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 2, acceso0: null, acceso1: null, acceso2: $2};
-    }
-    | s_dot identificador
-    {
-      var linea = yylineno;
-      var columna = yyleng;
-      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 1, acceso0: null, acceso1: $2, acceso2: null};
+      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: $2};
     }
   ;
 
@@ -829,36 +796,102 @@ SENTENCIA_LLAMADA
     } 
   ;
 
+SENTENCIA_ACCESO  
+  : identificador LISTA_DIMENSIONES2 LISTA_ACCESOS
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'sentencia_acceso', linea: linea, columna: columna, identificador: $1, dimensiones: $2, lista_acceso: $3};
+    }
+    |identificador LISTA_ACCESOS
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'sentencia_acceso', linea: linea, columna: columna, identificador: $1, dimensiones: [], lista_acceso: $2};
+    }
+  ;
+
+LISTA_ACCESOS   
+  : LISTA_ACCESOS ACCESO
+    {
+      $1.push($2);
+      $$ = $1;
+    }
+    |ACCESO
+    {
+      $$ = [$1];
+    }
+  ;
+
+ACCESO 
+  : s_dot SENTENCIA_LLAMADA
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 1, acceso0: null, acceso1: null, acceso2: $2};
+    }
+    | s_dot identificador
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'tipo_acceso', linea: linea, columna: columna, tipo: 0, acceso0: null, acceso1: $2, acceso2: null};
+    }
+  ;
+
 DATO_PRIMITIVO
     : nulo
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 1, valor: $1}, valor: yytext}; 
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 1, valor: $1}, valor: yytext, dimensiones: []}; 
       }
     | boolean
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 2, valor: $1}, valor: yytext}; 
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 2, valor: $1}, valor: yytext, dimensiones: []}; 
       }
     | number
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 3, valor: $1}, valor: yytext};
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 3, valor: $1}, valor: yytext, dimensiones: []};
       }
     | string
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 4, valor: $1}, valor:  yytext};
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 4, valor: $1}, valor: yytext, dimensiones: []};
       }
     | identificador
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: yytext};
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: yytext, dimensiones: []};
+      }
+    | identificador LISTA_DIMENSIONES2
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'dato_primitivo', linea: linea, columna: columna, tipo: {etiqueta: 'tipo', tipo: 5, valor: $1}, valor: $1, dimensiones: $2};
       }
     ;
 
+LISTA_DIMENSIONES2
+  : LISTA_DIMENSIONES2 DIMENSION
+    {
+      $1.push($2);
+      $$ = $1;
+    }
+  | DIMENSION
+    {
+      $$ = [$1];
+    }
+  ;
+
+DIMENSION
+  : s_cor_open EXPRESION s_cor_close
+    {
+      $$ = $2;
+    }
+  ;

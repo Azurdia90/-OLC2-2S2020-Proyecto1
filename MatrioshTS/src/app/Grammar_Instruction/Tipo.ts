@@ -7,9 +7,9 @@ class Tipo
 
     constructor(p_tipo : tipo_dato, p_identificador? : String)
     {
-        this.tipo = p_tipo;
-        this.traducir(p_tipo);
         this.identificador = p_identificador;
+        this.traducir(p_tipo);
+        this.tipo = p_tipo;
     }
 
     private traducir(p_tipo : tipo_dato)
@@ -46,6 +46,46 @@ class Tipo
         }
     }
 
+    public Equals(tipo_comp: Tipo)
+    {
+        if(this.tipo == tipo_comp.getTipo())
+        {
+            if(this.tipo != tipo_dato.IDENTIFICADOR)
+            {
+                return true;
+            }
+            else
+            {
+                if(this.identificador == tipo_comp.getIdentificador())
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            if(this.tipo == tipo_dato.NULO)
+            {
+                return true;
+            }
+            else
+            {
+                if(tipo_comp.getTipo() == tipo_dato.NULO)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
     public getTipo()
     {
         return this.tipo
@@ -53,7 +93,14 @@ class Tipo
 
     public getTraduccion()
     {
-        return this.traduccion;
+        if(this.tipo != tipo_dato.IDENTIFICADOR)
+        {
+            return this.traduccion;
+        }
+        else
+        {
+            return this.identificador;
+        }
     }
 
     public getPrioridad()

@@ -24,7 +24,7 @@ class Funcion_MatrioshTS extends Funcion
         return this.columna;
     }
 
-    public pasarParametros(lista_parametros_enviados : Array<Simbolo>, salida : Middle)
+    public pasarParametros(lista_parametros_enviados : Array<Simbolo>, salida : Middle, p_padre?: Simbolo)
     {
         let _return : Simbolo;
         
@@ -86,21 +86,33 @@ class Funcion_MatrioshTS extends Funcion
                 
                 if (_tmp_return.getRol() == tipo_rol.error)
                 {
-                    _return = _tmp_return;
-                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _return.getFila() == undefined ? "0" : _return.getFila().toString(), columna: _return.getColumna() == undefined  ? "0" : _return.getColumna().toString(), identificador: this.identificador, descripcion: _return.getValor().toString()};
-                    Tabla_Errores.getInstance().push(error_encontrado);                 
+                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _tmp_return.getFila() == undefined ? "0" : _tmp_return.getFila().toString(), columna: _tmp_return.getColumna() == undefined  ? "0" : _tmp_return.getColumna().toString(), identificador: this.identificador, descripcion: _tmp_return.getValor().toString()};
+                    Tabla_Errores.getInstance().push(error_encontrado);    
+                                 
+                    _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.NULO), "");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    _return.setValor("null");  
                 }
                 else if (_tmp_return.getRol() == tipo_rol.detener)
                 {
-                    _return = _tmp_return;
-                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _return.getFila() == undefined ? "0" : _return.getFila().toString(), columna: _return.getColumna() == undefined  ? "0" : _return.getColumna().toString(), identificador: this.identificador, descripcion: "Error en Funcion: No se permite el uso de sentencia Break"};
-                    Tabla_Errores.getInstance().push(error_encontrado);                 
+                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _tmp_return.getFila() == undefined ? "0" : _tmp_return.getFila().toString(), columna: _tmp_return.getColumna() == undefined  ? "0" : _tmp_return.getColumna().toString(), identificador: this.identificador, descripcion: "Error en Funcion: No se permite el uso de sentencia Break"};
+                    Tabla_Errores.getInstance().push(error_encontrado);   
+                    
+                    _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.NULO), "");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    _return.setValor("null");  
                 }
                 else if(_tmp_return.getRol() == tipo_rol.continuar)
                 {
-                    _return = _tmp_return;
-                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _return.getFila() == undefined ? "0" : _return.getFila().toString(), columna: _return.getColumna() == undefined  ? "0" : _return.getColumna().toString(), identificador: this.identificador, descripcion: "Error en Funcion: No se permite el uso de sentencia Continue"};
+                    var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _tmp_return.getFila() == undefined ? "0" : _tmp_return.getFila().toString(), columna: _tmp_return.getColumna() == undefined  ? "0" : _tmp_return.getColumna().toString(), identificador: this.identificador, descripcion: "Error en Funcion: No se permite el uso de sentencia Continue"};
                     Tabla_Errores.getInstance().push(error_encontrado); 
+
+                    _return = new Simbolo(tipo_rol.valor,new Tipo(tipo_dato.NULO), "");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    _return.setValor("null");  
                 }
                 else if(_tmp_return.getRol() == tipo_rol.retornar) 
                 {                                                           
@@ -138,14 +150,14 @@ class Funcion_MatrioshTS extends Funcion
     {
         var clon_lista_parametros : Array<Instruction>  = new Array<Instruction>();
         var clon_lista_sentencias : Array<Instruction>  = new Array<Instruction>();
-        //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_parametros);}
+        //if(this.identificador == "swap"){console.log(this.lista_parametros);}
         for(var x = 0; x < this.lista_parametros.length; x++)
-        {   //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_parametros[x].getThis());}
+        {   //if(this.identificador == "swap"){console.log(this.lista_parametros[x].getThis());}
             clon_lista_parametros.push(this.lista_parametros[x].getThis());
         }
-        //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_sentencias);}
+        //if(this.identificador == "swap"){console.log(this.lista_sentencias);}
         for(var y = 0; y < this.lista_sentencias.length; y++)
-        {   //if(this.identificador == "SentenciasAnidadas"){console.log(this.lista_sentencias[y].getThis());}
+        {   //if(this.identificador == "swap"){console.log(this.lista_sentencias[y].getThis());}
             clon_lista_sentencias.push(this.lista_sentencias[y].getThis());
         }
         

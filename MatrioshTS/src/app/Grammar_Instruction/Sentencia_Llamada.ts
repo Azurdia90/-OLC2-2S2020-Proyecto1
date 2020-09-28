@@ -35,15 +35,15 @@ class Sentencia_Llamada extends Instruction
         {   
             if(this.global)
             {
-                funcion_actual = Tabla_Simbolos.getInstance().getFuncion(this.identificador);   
+                funcion_actual = Tabla_Simbolos.getInstance().getFuncion(this.identificador); 
             }
             else
             {
                 funcion_actual = this.padre.getFuncion(this.identificador);
                 this.global = true;
             }
-                      
-            if(funcion_actual == null)
+            //if(this.identificador == "relaciones1"){console.log(funcion_actual);}
+            if(funcion_actual == undefined || funcion_actual == null)
             {
                 _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA), "33-12");
                 _return.setFila(this.fila);
@@ -74,7 +74,7 @@ class Sentencia_Llamada extends Instruction
                 this.lista_parametros_enviar.push(tmp_val);
             }       
 
-            var _result :  Simbolo = funcion_actual.pasarParametros(this.lista_parametros_enviar,salida);
+            var _result :  Simbolo = funcion_actual.pasarParametros(this.lista_parametros_enviar,salida,this.padre);
             
             this.lista_parametros_enviar = new Array<Simbolo>();
             

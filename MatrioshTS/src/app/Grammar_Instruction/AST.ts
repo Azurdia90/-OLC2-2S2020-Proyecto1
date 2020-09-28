@@ -41,7 +41,8 @@ import Sentencia_Caso from './Sentencia_Caso';
 import Operador_Ternario from './Operador_Ternario';
 import Type_MatrioshTS from './Type_MatrioshTS';
 import Funcion_MatrioshTS from './Funcion_Matriosh';
-
+import Sentencia_Instancia from './Sentencia_Instancia';
+//vscode://vscode.github-authentication/did-authenticate?windowid=1&code=56828868e702751f3978&state=1acf4bbc-47c2-47e3-9a88-e19e71a95d00
 class AST
 {
     private superjason : Array<JSON>;
@@ -178,16 +179,16 @@ class AST
         var _result : Simbolo;
         
         for(var f = 0; f < this.lista_instrucciones.length; f++)
-        {
+        {    
             if(!(this.lista_instrucciones[f] instanceof Type_MatrioshTS) && !(this.lista_instrucciones[f] instanceof Funcion_Matriosh) && !(this.lista_instrucciones[f] instanceof Sentencia_Declaracion))
-            {
+            {   //console.log(this.lista_instrucciones[f]);
                 _result = this.lista_instrucciones[f].ejecutar(Tabla_Simbolos.getInstance().getEntorno_global(),Middle.getInstance());
             }
             else
             {
                 continue;
             }
-
+            //console.log(_result);
             if(_result != undefined && _result.getRol() == tipo_rol.error)
             {
                 var  error_encontrado = { tipo: "Análisis Semántico MatrioshTS", fila: _result.getFila() == undefined ? "0" : _result.getFila().toString(), columna: _result.getColumna() == undefined  ? "0" : _result.getColumna().toString(), identificador: "global", descripcion: _result.getValor().toString()};
@@ -246,11 +247,20 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_declaracion')
         {
-            return new Sentencia_Declaracion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['constante'],instruccion_jason['identificador'],instruccion_jason['valor'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['valor']),this.fabrica_tipo(instruccion_jason['tipo']));
+            return new Sentencia_Declaracion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['constante'],instruccion_jason['identificador'],instruccion_jason['tipo'] == null ? undefined : this.fabrica_tipo(instruccion_jason['tipo']),instruccion_jason['tipo'] == null ? undefined : instruccion_jason['tipo']['rol'],instruccion_jason['tipo'] == null ? undefined : instruccion_jason['tipo']['dimensiones'],instruccion_jason['valor'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['valor']));
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_asignacion')
         {
-            return new Sentencia_Asignacion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['tipo'],instruccion_jason['acceso0'],instruccion_jason['acceso1'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso1']),this.fabrica_expresiones(instruccion_jason['valor']));
+            let lista_dimensiones: Array<Instruction>;
+
+            lista_dimensiones = new Array<Instruction>();
+
+            for(var d = 0; d < instruccion_jason['acceso1'].length; d++)
+            {
+                lista_dimensiones.push(this.fabrica_expresiones(instruccion_jason['acceso1'][d]));
+            }
+
+            return new Sentencia_Asignacion(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['tipo'],instruccion_jason['acceso0'] == null ? "" : instruccion_jason['acceso0'],lista_dimensiones,instruccion_jason['acceso2'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso2']),this.fabrica_expresiones(instruccion_jason['valor']));
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_if')
         {
@@ -363,7 +373,7 @@ class AST
                 lista_accesos.push(<Tipo_Acceso>this.fabrica_instrucciones(tipo_acceso_jason));
             }
 
-            return new Sentencia_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['identificador'], lista_accesos);
+            return new Sentencia_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['identificador'], instruccion_jason['dimensiones'], lista_accesos);
         }
         else if(instruccion_jason['etiqueta'] == 'operador_incremento')
         {
@@ -375,7 +385,7 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'tipo_acceso')
         {
-            return new Tipo_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['tipo'], instruccion_jason['acceso0'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso0']), instruccion_jason['acceso2'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso2']), instruccion_jason['acceso1']);
+            return new Tipo_Acceso(instruccion_jason['fila'], instruccion_jason['columna'], instruccion_jason['tipo'], instruccion_jason['acceso0'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso0']), instruccion_jason['acceso2'] == null ? undefined : this.fabrica_expresiones(instruccion_jason['acceso2']),instruccion_jason['acceso1'] == null ? "": instruccion_jason['acceso1']);
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_llamada')
         {
@@ -484,6 +494,21 @@ class AST
         {
             return new Operador_Ternario(expresion_jason['fila'], expresion_jason['columna'], this.fabrica_expresiones(expresion_jason['condicion']), this.fabrica_expresiones(expresion_jason['expresion1']), this.fabrica_expresiones(expresion_jason['expresion2']));
         }
+        else if(expresion_jason['etiqueta'] == 'sentencia_instancia')
+        {
+            var lista_dimensiones : Array<Expresion>;
+            var parametro_jason : JSON;
+
+            lista_dimensiones = new Array<Expresion>();
+
+            for(var cont = 0; cont < expresion_jason['valor1'].length; cont++)
+            {
+                parametro_jason = expresion_jason['valor1'][cont];
+                lista_dimensiones.push(this.fabrica_expresiones(parametro_jason));
+            }
+
+            return new Sentencia_Instancia(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['tipo'], lista_dimensiones);
+        }
         else if(expresion_jason['etiqueta'] == 'sentencia_acceso')
         {
             var lista_accesos : Array<Tipo_Acceso>;
@@ -496,11 +521,11 @@ class AST
                 tipo_acceso_jason = expresion_jason['lista_acceso'][cont];
                 lista_accesos.push(<Tipo_Acceso>this.fabrica_expresiones(tipo_acceso_jason));
             }
-            return new Sentencia_Acceso(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['identificador'],lista_accesos);
+            return new Sentencia_Acceso(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['identificador'], expresion_jason['dimensiones'], lista_accesos);
         }
         else if(expresion_jason['etiqueta'] == 'tipo_acceso')
         {
-            return new Tipo_Acceso(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['tipo'], expresion_jason['acceso0'] == null ? undefined : this.fabrica_expresiones(expresion_jason['acceso0']), expresion_jason['acceso1'] == null ? undefined :  this.fabrica_expresiones(expresion_jason['acceso1']), expresion_jason['acceso2']);
+            return new Tipo_Acceso(expresion_jason['fila'],expresion_jason['columna'],expresion_jason['tipo'],expresion_jason['acceso0'] == null ? undefined : this.fabrica_expresiones(expresion_jason['acceso0']),expresion_jason['acceso2'] == null ? undefined : this.fabrica_expresiones(expresion_jason['acceso2']),expresion_jason['acceso1'] == null ? "": expresion_jason['acceso1']);
         }
         else if(expresion_jason['etiqueta'] == 'sentencia_llamada')
         {
@@ -519,7 +544,16 @@ class AST
         }
         else if(expresion_jason['etiqueta'] == 'dato_primitivo')
         {   
-            return new Dato_Primitivo(expresion_jason['fila'], expresion_jason['columna'],this.fabrica_tipo(expresion_jason['tipo']),expresion_jason['valor']);
+            let lista_dimensiones: Array<Instruction>;
+
+            lista_dimensiones = new Array<Instruction>();
+
+            for(var x = 0; x < expresion_jason['dimensiones'].length; x++)
+            {
+                lista_dimensiones.push(this.fabrica_expresiones(expresion_jason['dimensiones'][x]));
+            }
+
+            return new Dato_Primitivo(expresion_jason['fila'], expresion_jason['columna'],this.fabrica_tipo(expresion_jason['tipo']),expresion_jason['valor'],lista_dimensiones);
         }
         else
         {

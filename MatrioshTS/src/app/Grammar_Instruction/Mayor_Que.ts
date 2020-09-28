@@ -119,7 +119,7 @@ class Mayor_Que extends Expresion
     }
 
     public getThis() 
-    {
+    {   
         return new Mayor_Que(this.fila,this.columna,this.operador_izq.getThis(),this.operador_der.getThis());
     }
 

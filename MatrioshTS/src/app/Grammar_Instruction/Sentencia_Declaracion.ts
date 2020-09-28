@@ -37,9 +37,10 @@ class Sentencia_Declaracion extends Instruction
 
         try
         {
+
             if(this.valor == undefined && this.valor_ext == undefined)
             {
-                _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.NULO), "");
+                _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.VOID), "");
                 _val_fin.setValor("null");
             }
             else if(this.valor == undefined && this.valor_ext != undefined)
@@ -59,13 +60,18 @@ class Sentencia_Declaracion extends Instruction
             {
                 return _val_fin;
             }
-
+            
+            if(this.rol == undefined)
+            {
+                this.rol = _val_fin.getRol();
+            }
+            
             if(this.rol != _val_fin.getRol())
             {
                 if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.arreglo)
                 {
                     var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("No es posible asignar un arreglo a un valor primitivo.");
+                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un arreglo a un valor primitivo.");
                     nuevo_simbolo.setFila(this.fila);
                     nuevo_simbolo.setColumna(this.columna);
                     return nuevo_simbolo;
@@ -73,7 +79,7 @@ class Sentencia_Declaracion extends Instruction
                 else if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.type)
                 {
                     var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("No es posible asignar un type a un valor primitivo.");
+                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un type a un valor primitivo.");
                     nuevo_simbolo.setFila(this.fila);
                     nuevo_simbolo.setColumna(this.columna);
                     return nuevo_simbolo;
@@ -81,7 +87,7 @@ class Sentencia_Declaracion extends Instruction
                 if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.valor)
                 {
                     var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("No es posible asignar un valor primitivo a un arreglo.");
+                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un valor primitivo a un arreglo.");
                     nuevo_simbolo.setFila(this.fila);
                     nuevo_simbolo.setColumna(this.columna);
                     return nuevo_simbolo;
@@ -89,7 +95,7 @@ class Sentencia_Declaracion extends Instruction
                 else if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.type)
                 {
                     var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("No es posible asignar un type a un arreglo.");
+                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un type a un arreglo.");
                     nuevo_simbolo.setFila(this.fila);
                     nuevo_simbolo.setColumna(this.columna);
                     return nuevo_simbolo;
@@ -104,18 +110,103 @@ class Sentencia_Declaracion extends Instruction
                 }                
             }
             
-            if(this.tipo != undefined)
+            if(this.tipo != undefined && _val_fin.getTipo().getTipo() != tipo_dato.VOID)
             {
-                if(this.tipo.getTipo()  != _val_fin.getTipo().getTipo())
+                if(!this.tipo.Equals(_val_fin.getTipo()))
+                {   
+                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    nuevo_simbolo.setValor("Sentencia Declaración: El tipo de la variable es diferente al valor a asignar.");
+                    nuevo_simbolo.setFila(this.fila);
+                    nuevo_simbolo.setColumna(this.columna);
+                    return nuevo_simbolo;
+                }
+            }
+            else if(this.tipo != undefined && _val_fin.getTipo().getTipo() == tipo_dato.VOID)
+            {
+                if(this.rol == tipo_rol.valor)
                 {
-                    if(_val_fin.getTipo().getTipo() != tipo_dato.NULO)
+                    if(this.tipo.getTipo() == tipo_dato.NULO)
                     {
-                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                        nuevo_simbolo.setValor("El tipo de la variable es diferente al valor a asignar.");
-                        nuevo_simbolo.setFila(this.fila);
-                        nuevo_simbolo.setColumna(this.columna);
-                        return nuevo_simbolo;
+                        _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.NULO), "");
+                        _val_fin.setValor("null");
                     }
+                    else if(this.tipo.getTipo() == tipo_dato.BOOLEANO)
+                    {
+                        _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.BOOLEANO), "");
+                        _val_fin.setValor(false);
+                    }
+                    else if(this.tipo.getTipo() == tipo_dato.NUMERO)
+                    {
+                        _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.NUMERO), "");
+                        _val_fin.setValor(0);
+                    }
+                    else if(this.tipo.getTipo() == tipo_dato.CADENA)
+                    {
+                        _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.CADENA), "");
+                        _val_fin.setValor("");
+                    }
+                    else
+                    {
+                        _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.NULO), "");
+                        _val_fin.setValor("null");
+                    }
+                }
+                else if(this.rol == tipo_rol.arreglo)
+                {
+                    var arreglo_tmp: Array<Simbolo>;
+                    var lista_dimensiones_tmp: Array<Number>;
+
+                    arreglo_tmp: new Array<Simbolo>();
+                    lista_dimensiones_tmp: new Array<Number>();
+
+                    for(var x = 0; x < this.dimensiones; x++);
+                    {
+                        lista_dimensiones_tmp.push(0);
+                    }
+
+                    if(this.tipo.getTipo() == tipo_dato.NULO)
+                    {
+                        _val_fin = new Simbolo(tipo_rol.arreglo, new Tipo(tipo_dato.NULO), "");
+                        _val_fin.setListaDimensiones(lista_dimensiones_tmp);
+                        _val_fin.setValor(arreglo_tmp);
+                    }
+                    else if(this.tipo.getTipo() == tipo_dato.BOOLEANO)
+                    {
+                        _val_fin = new Simbolo(tipo_rol.arreglo, new Tipo(tipo_dato.BOOLEANO), "");
+                        _val_fin.setListaDimensiones(lista_dimensiones_tmp);
+                        _val_fin.setValor(arreglo_tmp);
+                    }
+                    else if(this.tipo.getTipo() == tipo_dato.NUMERO)
+                    {
+                        _val_fin = new Simbolo(tipo_rol.arreglo, new Tipo(tipo_dato.NUMERO), "");
+                        _val_fin.setListaDimensiones(lista_dimensiones_tmp);
+                        _val_fin.setValor(arreglo_tmp);
+                    }
+                    else if(this.tipo.getTipo() == tipo_dato.CADENA)
+                    {
+                        _val_fin = new Simbolo(tipo_rol.arreglo, new Tipo(tipo_dato.CADENA), "");
+                        _val_fin.setListaDimensiones(lista_dimensiones_tmp);
+                        _val_fin.setValor(arreglo_tmp);
+                    }
+                    else
+                    {
+                        _val_fin = new Simbolo(tipo_rol.arreglo, new Tipo(tipo_dato.NULO), "");
+                        _val_fin.setListaDimensiones(lista_dimensiones_tmp);
+                        _val_fin.setValor("null");
+                    }
+                }
+                else if(this.rol == tipo_rol.type)
+                {
+                    _val_fin = new Simbolo(tipo_rol.type, new Tipo(tipo_dato.NULO), "");
+                    _val_fin.setValor("null");
+                }
+                else
+                {
+                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    nuevo_simbolo.setValor("Sentencia Declaración: El tipo de rol de la variable desconocido.");
+                    nuevo_simbolo.setFila(this.fila);
+                    nuevo_simbolo.setColumna(this.columna);
+                    return nuevo_simbolo;
                 }
             }
             else
@@ -136,8 +227,10 @@ class Sentencia_Declaracion extends Instruction
                 else
                 {
                     var nuevo_simbolo : Simbolo = new Simbolo(this.rol,this.tipo,this.identificadores[cont]); 
-                    nuevo_simbolo.setValor(_val_fin.getValor());
                     nuevo_simbolo.setConstante(this.const);
+                    nuevo_simbolo.setValor(_val_fin.getValor());
+                    nuevo_simbolo.setListaDimensiones(_val_fin.getListaDimensiones());
+                    nuevo_simbolo.setListaFunciones(_val_fin.getListaFunciones());
                     entorno_padre.set(this.identificadores[cont],nuevo_simbolo);
                 }   
             }    
@@ -160,27 +253,7 @@ class Sentencia_Declaracion extends Instruction
 
     public getThis() 
     {
-        let sentencia_declaracion : Sentencia_Declaracion = new Sentencia_Declaracion(this.fila,this.columna,this.const,this.identificadores);
-
-        if(this.valor != undefined)
-        {
-            sentencia_declaracion.setValor(this.valor.getThis());
-        }
-        else
-        {
-            sentencia_declaracion.setValor(undefined);
-        }
-
-        if(this.tipo != undefined)
-        {
-            sentencia_declaracion.setTipo(this.tipo);
-        }
-        else
-        {
-            sentencia_declaracion.setTipo(undefined);
-        }
-
-        return sentencia_declaracion;
+        return new Sentencia_Declaracion(this.fila,this.columna,this.const,this.identificadores,this.tipo == undefined ? undefined : this.tipo,this.rol == undefined ? undefined : this.rol,this.dimensiones,this.valor == undefined ? undefined: this.valor.getThis());
     }
 
     public getValor()

@@ -14,6 +14,7 @@ class Simbolo
     private valor : Object;
 
     private lista_funciones : Array<Funcion>;
+    private lista_dimensiones: Array<Number>;
 
     private constante : Boolean;
             
@@ -28,6 +29,7 @@ class Simbolo
         this.valor = undefined;
 
         this.lista_funciones = new Array<Funcion>();
+        this.lista_dimensiones = new Array<Number>();
 
         this.constante = false;                        
     }
@@ -90,9 +92,24 @@ class Simbolo
         this.constante = p_constante;
     }
 
+    public getListaDimensiones()
+    {
+        return this.lista_dimensiones;
+    }
+
+    public setListaDimensiones(p_lista_dimensiones: Array<Number>)
+    {
+        this.lista_dimensiones = p_lista_dimensiones;
+    }
+
     public getListaFunciones()
     {
         return this.lista_funciones;
+    }
+
+    public setListaFunciones(p_lista_funciones: Array<Funcion>)
+    {
+        this.lista_funciones = p_lista_funciones;
     }
     
     public getFuncion(p_identificador : String)
@@ -110,30 +127,6 @@ class Simbolo
         
         return _return;
     }  
-    
-    /*
-    public Object getFirstValor() {
-        return valor.get(0);
-    }
-
-    public void setFirstValor(Object valor) {
-        if(this.valor.size() > 0)
-        {
-            this.valor.set(0, valor);    
-        }
-        else
-        {
-            this.valor.add(0, valor); 
-        }
-    }
-    
-    public void concatValor(ArrayList<Object> valor) {
-        for(int x = 0; x < valor.size(); x++)
-        {
-            this.valor.add(valor.get(x));
-        }        
-    }
-    */
     
     public tostring()
     {

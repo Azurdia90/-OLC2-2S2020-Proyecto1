@@ -42,7 +42,7 @@ class Funcion extends Instruction
         return undefined       
     }
     
-    public pasarParametros(lista_parametros_enviados : Array<Simbolo> , salida : Middle)
+    public pasarParametros(lista_parametros_enviados : Array<Simbolo> , salida : Middle, p_padre?: Simbolo)
     {
         //To change body of generated methods, choose Tools | Templates.
         return undefined;        
