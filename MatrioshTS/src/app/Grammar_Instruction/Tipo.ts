@@ -62,7 +62,14 @@ class Tipo
                 }
                 else
                 {
-                    return false;
+                    if(tipo_comp.getTraduccion() == "")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
         }

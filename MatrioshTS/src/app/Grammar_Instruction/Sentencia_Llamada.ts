@@ -65,7 +65,7 @@ class Sentencia_Llamada extends Instruction
                     return _return;
                 }
 
-                if(tmp_val.getRol() != tipo_rol.valor && tmp_val.getRol() != tipo_rol.arreglo)
+                if(tmp_val.getRol() != tipo_rol.valor && tmp_val.getRol() != tipo_rol.arreglo && tmp_val.getRol() != tipo_rol.type)
                 {
                     this.lista_parametros_enviar = new Array<Simbolo>();
                     return tmp_val;

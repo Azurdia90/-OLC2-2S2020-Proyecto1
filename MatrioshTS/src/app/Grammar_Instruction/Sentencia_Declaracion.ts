@@ -2,6 +2,7 @@ import Instruction from './Instruction';
 import Tipo from './Tipo';
 import Simbolo from './Simbolo';
 import Middle from './Middle';
+import { RENDER_FLAGS } from '@angular/compiler/src/render3/view/util';
 
 class Sentencia_Declaracion extends Instruction
 {
@@ -37,7 +38,6 @@ class Sentencia_Declaracion extends Instruction
 
         try
         {
-
             if(this.valor == undefined && this.valor_ext == undefined)
             {
                 _val_fin = new Simbolo(tipo_rol.valor, new Tipo(tipo_dato.VOID), "");
@@ -68,54 +68,95 @@ class Sentencia_Declaracion extends Instruction
             
             if(this.rol != _val_fin.getRol())
             {
-                if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.arreglo)
+                if(!(this.rol == tipo_rol.type && _val_fin.getRol() == tipo_rol.valor && _val_fin.getTipo().Equals(new Tipo(tipo_dato.NULO))))
                 {
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un arreglo a un valor primitivo.");
-                    nuevo_simbolo.setFila(this.fila);
-                    nuevo_simbolo.setColumna(this.columna);
-                    return nuevo_simbolo;
+                    if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.arreglo)
+                    {
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un arreglo a un valor primitivo.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }
+                    else if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.type)
+                    {
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un type a un valor primitivo.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }
+                    else if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.valor)
+                    {
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un valor primitivo a un arreglo.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }
+                    else if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.type)
+                    {
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un type a un arreglo.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }
+                    else
+                    {
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("Sentencia Declaración: No se encuentran definidos los roles.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }                     
                 }
-                else if(this.rol == tipo_rol.valor && _val_fin.getRol() == tipo_rol.type)
+                               
+            }
+
+            
+            if(this.tipo != undefined && _val_fin.getTipo().getTipo() != tipo_dato.VOID)
+            {
+                if(this.rol == tipo_rol.valor)
                 {
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un type a un valor primitivo.");
-                    nuevo_simbolo.setFila(this.fila);
-                    nuevo_simbolo.setColumna(this.columna);
-                    return nuevo_simbolo;
+                    if(!this.tipo.Equals(_val_fin.getTipo()))
+                    {   
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("Sentencia Declaración: El tipo de la variable es diferente al valor a asignar.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }
                 }
-                if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.valor)
+                else if(this.rol == tipo_rol.arreglo)
                 {
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un valor primitivo a un arreglo.");
-                    nuevo_simbolo.setFila(this.fila);
-                    nuevo_simbolo.setColumna(this.columna);
-                    return nuevo_simbolo;
+                    if(!this.tipo.Equals(_val_fin.getTipo()))
+                    {   
+                        var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                        nuevo_simbolo.setValor("Sentencia Declaración: El tipo de la variable es diferente al valor a asignar.");
+                        nuevo_simbolo.setFila(this.fila);
+                        nuevo_simbolo.setColumna(this.columna);
+                        return nuevo_simbolo;
+                    }
                 }
-                else if(this.rol == tipo_rol.arreglo && _val_fin.getRol() == tipo_rol.type)
+                else if(this.rol == tipo_rol.type)
                 {
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("Sentencia Declaración: No es posible asignar un type a un arreglo.");
-                    nuevo_simbolo.setFila(this.fila);
-                    nuevo_simbolo.setColumna(this.columna);
-                    return nuevo_simbolo;
+                    if(!_val_fin.getTipo().Equals(new Tipo(tipo_dato.IDENTIFICADOR,"")))
+                    {   
+                        if(!this.tipo.Equals(_val_fin.getTipo()))
+                        {  
+                            var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                            nuevo_simbolo.setValor("Sentencia Declaración: El tipo de la variable es diferente al valor a asignar.");
+                            nuevo_simbolo.setFila(this.fila);
+                            nuevo_simbolo.setColumna(this.columna);
+                            return nuevo_simbolo;
+                        }
+                    }
                 }
                 else
                 {
                     var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("Sentencia Declaración: No se encuentran definidos los roles.");
-                    nuevo_simbolo.setFila(this.fila);
-                    nuevo_simbolo.setColumna(this.columna);
-                    return nuevo_simbolo;
-                }                
-            }
-            
-            if(this.tipo != undefined && _val_fin.getTipo().getTipo() != tipo_dato.VOID)
-            {
-                if(!this.tipo.Equals(_val_fin.getTipo()))
-                {   
-                    var nuevo_simbolo : Simbolo = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                    nuevo_simbolo.setValor("Sentencia Declaración: El tipo de la variable es diferente al valor a asignar.");
+                    nuevo_simbolo.setValor("Sentencia Declaración: El tipo de rol de la variable desconocido.");
                     nuevo_simbolo.setFila(this.fila);
                     nuevo_simbolo.setColumna(this.columna);
                     return nuevo_simbolo;

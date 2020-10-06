@@ -5,15 +5,14 @@
 %%
 
 \s+                   /* skip whitespace */
-"//"[^\n]*           /*comentario lineal*/ 
-"/"[^"/#"]"/"        /*comentario multilineal*/
+"//"[^\n]*            /*comentario lineal*/ 
+"/"[*][^"*"][*]"/"    /*comentario multilineal*/
 
 "import"              return 'r_import'
 
 "void"                return 'r_void'
 "boolean"             return 'r_boolean'
 "number"              return 'r_number'
-"String"              return 'r_string'
 
 "public"              return 'r_public'
 "private"             return 'r_private'
@@ -476,7 +475,7 @@ TYPES
 LISTA_ATRIBUTOS
   : LISTA_ATRIBUTOS s_coma ATRIBUTO
     {
-      $1.push($2);
+      $1.push($3);
       $$ = $1;
     }
   | ATRIBUTO
@@ -490,7 +489,28 @@ ATRIBUTO
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = {etiqueta: 'atributo', linea: linea, columna: columna, valor: $1, tipo: $3};
+      $$ = {etiqueta: 'atributo_declaracion', linea: linea, columna: columna, identificador: $1, tipo: $3};
+    }
+  ;
+
+LISTA_ATRIBUTOS2
+  : LISTA_ATRIBUTOS2 s_coma ATRIBUTO2
+    {
+      $1.push($3);
+      $$ = $1;
+    }
+  | ATRIBUTO2
+    {
+      $$ = [$1];
+    }
+  ;
+
+ATRIBUTO2
+  : identificador s_doble_dot EXPRESION
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: 'atributo_instancia', linea: linea, columna: columna, identificador: $1, valor: $3};
     }
   ;
 
@@ -564,7 +584,7 @@ TIPO
         }
         else
         {
-          $$ = {etiqueta: "tipo", tipo: 5, valor: $1, rol: 3, dimensiones: $2};
+          $$ = {etiqueta: "tipo", tipo: 5, valor: $1, rol: 1, dimensiones: $2};
         }
       }
     | r_void
@@ -583,7 +603,7 @@ TIPO
         }
         else
         {
-          $$ = {etiqueta: 'tipo', tipo: 5, valor: $1, rol: 3};
+          $$ = {etiqueta: 'tipo', tipo: 5, valor: $1, rol: 2};
         }
       }
     |
@@ -771,13 +791,19 @@ SENTENCIA_INSTANCIA
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: []};
+      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: [], valor2: null};
     }
   | s_cor_open LISTA_EXPRESIONES s_cor_close
     {
       var linea = yylineno;
       var columna = yyleng;
-      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: $2};
+      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 0, valor1: $2, valor2: null};
+    }
+  | s_key_open LISTA_ATRIBUTOS2 s_key_close
+    {
+      var linea = yylineno;
+      var columna = yyleng;
+      $$ = {etiqueta: "sentencia_instancia", linea: linea, columna: columna, tipo: 1, valor1: null, valor2: $2};
     }
   ;
 

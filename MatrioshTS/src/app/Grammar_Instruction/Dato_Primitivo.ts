@@ -62,25 +62,14 @@ class Dato_Primitivo extends Expresion
                 else
                 {   
                     _return = Tabla_Simbolos.getInstance().getStack().getSimbolo(this.valor);                    
-                }   
+                }  
                 return _return; 
-                /*if(_return.getRol() != tipo_rol.arreglo)
-                {
-                    return _return;
-                }
-                else
-                {
-                    _return = new Simbolo(tipo_rol.error, new Tipo(tipo_dato.CADENA), "33-12");
-                    _return.setFila(this.fila);
-                    _return.setColumna(this.columna);
-                    _return.setValor("No se especificaron la dimension(es) de acceso.");
-                    return _return;
-                } */  
             }
             else if(this.tipo.getTipo() == tipo_dato.IDENTIFICADOR && this.dimensiones.length > 0)
             {   
                 var simbolo_tmp : Simbolo;
                 posicion = 2;
+
                 if(entorno_padre.has(this.valor))
                 {                 
                     simbolo_tmp = entorno_padre.get(this.valor);

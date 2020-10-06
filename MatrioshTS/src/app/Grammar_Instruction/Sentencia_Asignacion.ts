@@ -30,7 +30,7 @@ class Sentencia_Asignacion extends Instruction
         let _val_fin : Simbolo;
 
         try
-        {   console.log(this.valor);console.log("+++++++");
+        {   //console.log(this.tipo);
             if(this.tipo == 0)
             {
                 if(entorno_padre.has(this.acceso0))
@@ -176,21 +176,24 @@ class Sentencia_Asignacion extends Instruction
             {
                 return _acceso
             }
-            console.log("==========");console.log(_acceso); console.log(this.valor); 
+            //console.log("==========");console.log(_acceso); console.log(this.valor);console.log("==========");
             _val_fin = this.valor.ejecutar(entorno_padre, salida);
-            console.log(_acceso); console.log(_val_fin); console.log("==========");
-            if(_val_fin.getRol() != tipo_rol.valor && _val_fin.getRol() != tipo_rol.arreglo && _acceso.getRol() != tipo_rol.type)
+            console.log("++++++++++");console.log(_acceso); console.log(_val_fin);  console.log("++++++++++");
+            if(_val_fin.getRol() != tipo_rol.valor && _val_fin.getRol() != tipo_rol.arreglo && _val_fin.getRol() != tipo_rol.type)
             {
                 return _val_fin;
             }
 
             if(_acceso.getRol() != _val_fin.getRol())
             {
-                _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
-                _return.setValor("Sentencia Asignación: El tipo de rol es diferente al valor a asignar.");
-                _return.setFila(this.fila);
-                _return.setColumna(this.columna);
-                return _return;
+                if(!(_acceso.getRol() == tipo_rol.valor && _acceso.getTipo().Equals(new Tipo(tipo_dato.NULO))))
+                {
+                    _return = new Simbolo(tipo_rol.error,new Tipo(tipo_dato.CADENA),"33-12"); 
+                    _return.setValor("Sentencia Asignación: El tipo de rol es diferente al valor a asignar.");
+                    _return.setFila(this.fila);
+                    _return.setColumna(this.columna);
+                    return _return;
+                }
             } 
 
             if(!_acceso.getTipo().Equals(_val_fin.getTipo()))

@@ -22,7 +22,7 @@ class Sentencia_Return extends Instruction
             if(this.valor != undefined)
             {
                 _return_tmp = this.valor.ejecutar(entorno_padre, salida);
-
+                //console.log(_return_tmp);
                 _return = new Simbolo(tipo_rol.retornar,_return_tmp.getTipo(), "");
                 _return.setFila(this.fila);
                 _return.setColumna(this.columna);

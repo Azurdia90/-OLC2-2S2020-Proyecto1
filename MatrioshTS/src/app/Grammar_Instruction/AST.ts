@@ -243,7 +243,25 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'type')
         {
-            return new Type_MatrioshTS(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['identificador'],instruccion_jason['lista_atributos']);
+            let lista_identificadores: Array<String>;
+            let lista_tipos: Array<Tipo>;
+
+            lista_identificadores = new Array<String>();
+            lista_tipos = new Array<Tipo>();
+
+            for(var x = 0; x < instruccion_jason['lista_atributos'].length; x++)
+            {
+                let atributo = instruccion_jason['lista_atributos'][x];
+                lista_identificadores.push(atributo['identificador']);
+            }
+
+            for(var y = 0; y < instruccion_jason['lista_atributos'].length; y++)
+            {
+                let atributo = instruccion_jason['lista_atributos'][y];
+                lista_tipos.push(this.fabrica_tipo(atributo['tipo']));
+            }
+
+            return new Type_MatrioshTS(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['identificador'],lista_identificadores,lista_tipos);
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_declaracion')
         {
@@ -264,9 +282,9 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_if')
         {
-            var lista_sentencias_if : Array<Instruction>;
-            var lista_sentencias_else_if : Array<Instruction>;
-            var lista_sentencias_else : Array<Instruction>;
+            let lista_sentencias_if : Array<Instruction>;
+            let lista_sentencias_else_if : Array<Instruction>;
+            let lista_sentencias_else : Array<Instruction>;
 
             lista_sentencias_if = new Array<Instruction>();
             lista_sentencias_else_if = new Array<Instruction>();
@@ -297,7 +315,7 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_switch')
         {
-            var lista_casos : Array<Instruction>;
+            let lista_casos : Array<Instruction>;
 
             lista_casos = new Array<Tipo_Acceso>();
 
@@ -310,7 +328,7 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_caso')
         {
-            var lista_sentencias : Array<Instruction>;
+            let lista_sentencias : Array<Instruction>;
 
             lista_sentencias = new Array<Tipo_Acceso>();
 
@@ -323,7 +341,7 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_while')
         {
-            var lista_sentencias : Array<Instruction>;
+            let lista_sentencias : Array<Instruction>;
 
             lista_sentencias = new Array<Tipo_Acceso>();
 
@@ -336,7 +354,7 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_do_while')
         {
-            var lista_sentencias : Array<Instruction>;
+            let lista_sentencias : Array<Instruction>;
 
             lista_sentencias = new Array<Tipo_Acceso>();
 
@@ -349,7 +367,7 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_for')
         {
-            var lista_sentencias : Array<Instruction>;
+            let lista_sentencias : Array<Instruction>;
 
             lista_sentencias = new Array<Tipo_Acceso>();
 
@@ -362,8 +380,8 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_acceso')
         {
-            var lista_accesos : Array<Tipo_Acceso>;
-            var tipo_acceso_jason : JSON;
+            let lista_accesos : Array<Tipo_Acceso>;
+            let tipo_acceso_jason : JSON;
 
             lista_accesos = new Array<Tipo_Acceso>();
 
@@ -389,8 +407,8 @@ class AST
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_llamada')
         {
-            var lista_parametros : Array<Expresion>;
-            var parametro_jason : JSON;
+            let lista_parametros : Array<Expresion>;
+            let parametro_jason : JSON;
 
             lista_parametros = new Array<Expresion>();
 
@@ -496,23 +514,47 @@ class AST
         }
         else if(expresion_jason['etiqueta'] == 'sentencia_instancia')
         {
-            var lista_dimensiones : Array<Expresion>;
-            var parametro_jason : JSON;
+            let lista_identificadores : Array<String>;
+            let lista_dimensiones : Array<Instruction>;
+            let lista_valores : Array<Instruction>;
+            let parametro_jason : JSON;
 
-            lista_dimensiones = new Array<Expresion>();
+            lista_identificadores = new Array<String>();
+            lista_dimensiones = new Array<Instruction>();
+            lista_valores = new Array<Instruction>();
 
-            for(var cont = 0; cont < expresion_jason['valor1'].length; cont++)
+            if(expresion_jason['valor1'] != null)
             {
-                parametro_jason = expresion_jason['valor1'][cont];
-                lista_dimensiones.push(this.fabrica_expresiones(parametro_jason));
+                for(var cont = 0; cont < expresion_jason['valor1'].length; cont++)
+                {
+                    parametro_jason = expresion_jason['valor1'][cont];
+                    lista_dimensiones.push(this.fabrica_expresiones(parametro_jason));
+                }
+            }
+            
+            if(expresion_jason['valor2'] != null)
+            {
+                for(var cont = 0; cont < expresion_jason['valor2'].length; cont++)
+                {
+                    parametro_jason = expresion_jason['valor2'][cont];
+                    
+                    lista_identificadores.push(parametro_jason['identificador']);
+                }
+
+                for(var cont = 0; cont < expresion_jason['valor2'].length; cont++)
+                {
+                    parametro_jason = expresion_jason['valor2'][cont];
+                
+                    lista_valores.push(this.fabrica_expresiones(parametro_jason['valor']));
+                }
             }
 
-            return new Sentencia_Instancia(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['tipo'], lista_dimensiones);
+            return new Sentencia_Instancia(expresion_jason['fila'], expresion_jason['columna'], expresion_jason['tipo'], lista_identificadores, lista_dimensiones, lista_valores);
         }
         else if(expresion_jason['etiqueta'] == 'sentencia_acceso')
         {
-            var lista_accesos : Array<Tipo_Acceso>;
-            var tipo_acceso_jason : JSON;
+            let lista_accesos : Array<Tipo_Acceso>;
+            let tipo_acceso_jason : JSON;
 
             lista_accesos = new Array<Tipo_Acceso>();
 
@@ -529,8 +571,8 @@ class AST
         }
         else if(expresion_jason['etiqueta'] == 'sentencia_llamada')
         {
-            var lista_parametros : Array<Expresion>;
-            var parametro_jason : JSON;
+            let lista_parametros : Array<Expresion>;
+            let parametro_jason : JSON;
 
             lista_parametros = new Array<Expresion>();
 
