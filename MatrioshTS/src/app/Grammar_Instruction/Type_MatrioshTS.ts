@@ -34,6 +34,16 @@ class Type_MatrioshTS extends Instruction
         return this.identificador;
     }
 
+    public getListaAtributos()
+    {
+        return this.lista_atributos;
+    }
+
+    public getListaTipos()
+    {
+        return this.lista_tipos;
+    }
+
     public ejecutar(entorno_padre : Map<String,Simbolo>, salida : Middle)
     {
 

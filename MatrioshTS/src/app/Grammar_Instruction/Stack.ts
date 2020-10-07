@@ -10,6 +10,29 @@ class Stack extends Array<Map<String,Simbolo>>
     //este objeto tiene metodo push para
     //Eliminar el ultimo de la lista
 
+    private ambito: String;
+    private subambito: String;
+
+    public getambito()
+    {
+        return this.ambito;
+    }
+
+    public setambito(p_ambito: String)
+    {
+        this.ambito = p_ambito;
+    }
+
+    public getSubambito()
+    {
+        return this.subambito;
+    }
+
+    public setSubambito(p_subambito: String)
+    {
+        this.subambito = p_subambito;
+    }
+
     public _push(p_fila : number, p_columna : number, p_entorno_actual : Map<String,Simbolo>)
     {
         var object_console :Simbolo;

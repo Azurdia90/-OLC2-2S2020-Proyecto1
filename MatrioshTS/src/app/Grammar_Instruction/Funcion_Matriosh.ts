@@ -12,6 +12,7 @@ class Funcion_MatrioshTS extends Funcion
     constructor(p_fila : number, p_columna : number, p_id : String, p_lista_parametros : Array<Instruction>, p_lista_sentencias : Array<Instruction>, p_tipo? : Tipo)
     {
         super(p_fila, p_columna, p_id, p_lista_parametros, p_lista_sentencias);
+        this.tipo = p_tipo;
     }
     
     public getFila()
@@ -22,6 +23,11 @@ class Funcion_MatrioshTS extends Funcion
     public getColumna()
     {
         return this.columna;
+    }
+
+    public getTipo()
+    {
+        return this.tipo;
     }
 
     public pasarParametros(lista_parametros_enviados : Array<Simbolo>, salida : Middle, p_padre?: Simbolo)

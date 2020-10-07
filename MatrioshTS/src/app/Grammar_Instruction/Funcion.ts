@@ -1,9 +1,11 @@
 import Instruction from './Instruction';
 import Simbolo from './Simbolo';
 import Middle from './Middle';
+import Tipo from './Tipo';
 
 class Funcion extends Instruction
 {
+    protected tipo : Tipo;
     protected identificador : String;
     
     protected entorno_local : Map<String,Simbolo>;
@@ -19,6 +21,10 @@ class Funcion extends Instruction
         this.lista_sentencias = p_lista_sentencias;
         
         this.lista_valores = new Array<Simbolo>();
+    }
+    public getTipo()
+    {
+        return this.tipo;
     }
     
     public getIdentificador() 
