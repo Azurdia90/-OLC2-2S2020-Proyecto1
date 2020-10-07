@@ -6,7 +6,7 @@
 
 \s+                   /* skip whitespace */
 "//"[^\n]*            /*comentario lineal*/ 
-"/"[*][^"*"][*]"/"    /*comentario multilineal*/
+"/"[^"*"]"/"          /*comentario multilineal*/
 
 "import"              return 'r_import'
 
@@ -50,6 +50,7 @@
 "="                   return 's_asign'
 "++"                  return 's_increment'
 "--"                  return 's_decrement'
+"**"                  return 's_exponential'
 "+"                   return 's_plus'
 "-"                   return 's_minus'
 "*"                   return 's_mul'
@@ -94,7 +95,7 @@
 %left     s_greather s_greather_equal s_less s_less_equal
 
 %left     s_plus s_minus
-%left     s_mul s_div s_mod
+%left     s_mul s_div s_exponential s_mod 
 
 %right    r_new
 
@@ -680,6 +681,12 @@ EXPRESION_ARITMETICA
         var linea = yylineno;
         var columna = yyleng;
         $$ = {etiqueta: 'division', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
+      }
+    | EXPRESION s_exponential EXPRESION
+      {
+        var linea = yylineno;
+        var columna = yyleng;
+        $$ = {etiqueta: 'potencia', linea: linea, columna: columna, expresion1: $1, expresion2: $3};
       }
     | EXPRESION s_mod EXPRESION
       {

@@ -42,6 +42,7 @@ import Operador_Ternario from './Operador_Ternario';
 import Type_MatrioshTS from './Type_MatrioshTS';
 import Funcion_MatrioshTS from './Funcion_Matriosh';
 import Sentencia_Instancia from './Sentencia_Instancia';
+import Potencia from './Potencia';
 //vscode://vscode.github-authentication/did-authenticate?windowid=1&code=56828868e702751f3978&state=1acf4bbc-47c2-47e3-9a88-e19e71a95d00
 class AST
 {
@@ -455,6 +456,10 @@ class AST
         else if(expresion_jason['etiqueta'] == 'division')
         {
             return new Division(expresion_jason['fila'], expresion_jason['columna'], this.fabrica_expresiones(expresion_jason['expresion1']), this.fabrica_expresiones(expresion_jason['expresion2']));
+        }
+        else if(expresion_jason['etiqueta'] == 'potencia')
+        {
+            return new Potencia(expresion_jason['fila'], expresion_jason['columna'], this.fabrica_expresiones(expresion_jason['expresion1']), this.fabrica_expresiones(expresion_jason['expresion2']));
         }
         else if(expresion_jason['etiqueta'] == 'modulo')
         {
