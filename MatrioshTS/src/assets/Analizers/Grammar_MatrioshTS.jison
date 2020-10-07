@@ -415,17 +415,17 @@ SENTENCIA_FOR
     ; 
 
 SENTENCIA_FOR_LIST
-    : r_for s_par_open let identificador r_in identidicador s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+    : r_for s_par_open r_let identificador r_in identificador s_par_close s_key_open LISTA_SENTENCIAS s_key_close
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'sentencia_for_list', linea: linea, columna: columna, id1: $4, id2: $6, lista_sentencias: $9};   
+        $$ = {etiqueta: 'sentencia_for_list', linea: linea, columna: columna, tipo: 0, id1: $4, id2: $6, lista_sentencias: $9};   
       }
-    | r_for s_par_open let identificdor r_of identificador s_par_close s_key_open LISTA_SENTENCIAS s_key_close
+    | r_for s_par_open r_let identificador r_of identificador s_par_close s_key_open LISTA_SENTENCIAS s_key_close
       {
         var linea = yylineno;
         var columna = yyleng;
-        $$ = {etiqueta: 'sentencia_for_list', linea: linea, columna: columna, id1: $3, id2: $5, lista_sentencias: $9};
+        $$ = {etiqueta: 'sentencia_for_list', linea: linea, columna: columna, tipo: 1, id1: $4, id2: $6, lista_sentencias: $9};
       }
     ; 
 

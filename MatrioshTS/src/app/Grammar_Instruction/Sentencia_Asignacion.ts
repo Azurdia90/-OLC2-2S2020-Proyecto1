@@ -178,7 +178,7 @@ class Sentencia_Asignacion extends Instruction
             }
             //console.log("==========");console.log(_acceso); console.log(this.valor);console.log("==========");
             _val_fin = this.valor.ejecutar(entorno_padre, salida);
-            console.log("++++++++++");console.log(_acceso); console.log(_val_fin);  console.log("++++++++++");
+            //console.log("++++++++++");console.log(_acceso); console.log(_val_fin);  console.log("++++++++++");
             if(_val_fin.getRol() != tipo_rol.valor && _val_fin.getRol() != tipo_rol.arreglo && _val_fin.getRol() != tipo_rol.type)
             {
                 return _val_fin;

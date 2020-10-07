@@ -43,6 +43,7 @@ import Type_MatrioshTS from './Type_MatrioshTS';
 import Funcion_MatrioshTS from './Funcion_Matriosh';
 import Sentencia_Instancia from './Sentencia_Instancia';
 import Potencia from './Potencia';
+import Sentencia_For_List from './Sentencia_For_List';
 //vscode://vscode.github-authentication/did-authenticate?windowid=1&code=56828868e702751f3978&state=1acf4bbc-47c2-47e3-9a88-e19e71a95d00
 class AST
 {
@@ -378,6 +379,19 @@ class AST
             }
             
             return new Sentencia_For(instruccion_jason['linea'],instruccion_jason['columna'],this.fabrica_instrucciones(instruccion_jason['sentencia1']), this.fabrica_expresiones(instruccion_jason['sentencia2']), this.fabrica_expresiones(instruccion_jason['sentencia3']),lista_sentencias);
+        }
+        else if(instruccion_jason['etiqueta'] == 'sentencia_for_list')
+        {
+            let lista_sentencias : Array<Instruction>;
+
+            lista_sentencias = new Array<Tipo_Acceso>();
+
+            for(var x = 0; x < instruccion_jason['lista_sentencias'].length; x++)
+            {
+                lista_sentencias.push(this.fabrica_instrucciones(instruccion_jason['lista_sentencias'][x]));
+            }
+            
+            return new Sentencia_For_List(instruccion_jason['linea'],instruccion_jason['columna'],instruccion_jason['tipo'],instruccion_jason['id1'],instruccion_jason['id2'],lista_sentencias);
         }
         else if(instruccion_jason['etiqueta'] == 'sentencia_acceso')
         {
