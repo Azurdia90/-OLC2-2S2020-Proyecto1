@@ -2,7 +2,6 @@ import Instruction from "./Instruction";
 import Middle from './Middle';
 import Sentencia_Caso from './Sentencia_Caso';
 import Simbolo from './Simbolo';
-import Tabla_Simbolos from './Tabla_Simbolos';
 import Tipo from './Tipo';
 
 class Sentencia_Switch extends Instruction
